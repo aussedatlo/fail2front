@@ -1,16 +1,23 @@
-import react from "@vitejs/plugin-react";
-import path from "path";
-import { defineConfig } from "vite";
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src/"),
-      "@view": path.resolve(__dirname, "./src/view/"),
-      "@data": path.resolve(__dirname, "/src/data/"),
-      "@domain": path.resolve(__dirname, "./src/domain/"),
-      "@types": path.resolve(__dirname, "./src/types/"),
+      '@': path.resolve(__dirname, './src/'),
     },
   },
-});
+  server: {
+    proxy:
+      mode === 'development'
+        ? {
+            '/bans': {
+              target: 'http://localhost:8000',
+              changeOrigin: true,
+            },
+          }
+        : undefined,
+  },
+}));

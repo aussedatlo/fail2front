@@ -1,5 +1,9 @@
-import React from "react";
+import React from 'react';
+
+import { useBans } from '@/hooks/useBans';
 
 export const Dashboard: React.FC = () => {
-  return <div>Dashboard</div>;
+  const bans = useBans();
+
+  return <div>bans: {bans?.length}</div>;
 };

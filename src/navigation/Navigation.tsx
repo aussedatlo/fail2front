@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Dashboard } from "@view/dashboard/Dashboard";
+import { Dashboard } from '@/view/dashboard/Dashboard';
 
 export const Navigation: React.FC = () => {
   return (

@@ -23,10 +23,6 @@
     /* Aliases */
     "paths": {
       "@/*": ["./src/*"],
-      "@view/*": ["./src/view/*"],
-      "@data/*": ["./src/data/*"],
-      "@domain/*": ["./src/domain/*"],
-      "@types/*": ["./src/types/*"],
     }
   },
   "include": ["src"],
