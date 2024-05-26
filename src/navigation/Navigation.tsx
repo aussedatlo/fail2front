@@ -1,48 +1,9 @@
 import React from 'react';
-import { HashRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { Tabs, TabsProps } from 'antd';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import { Dashboard } from '@/view/dashboard/Dashboard';
 
-const items: TabsProps['items'] = [
-  {
-    key: 'dashboard',
-    label: 'Dashboard',
-  },
-  {
-    key: 'jails',
-    label: 'Jails',
-  },
-  {
-    key: 'bans',
-    label: 'Bans',
-  },
-  {
-    key: 'history',
-    label: 'History',
-  },
-];
-
-const TabsNavigation = () => {
-  const navigate = useNavigate();
-  return (
-    <Tabs
-      tabBarExtraContent={{
-        left: (
-          <h2 style={{ position: 'absolute', top: 0, margin: 5 }}>
-            Fail2Front
-          </h2>
-        ),
-      }}
-      defaultActiveKey="1"
-      items={items}
-      onChange={(activeKey) => {
-        navigate(activeKey);
-      }}
-      centered
-    />
-  );
-};
+import { TabsNavigation } from './TabsNavigation';
 
 export const Navigation: React.FC = () => {
   return (
