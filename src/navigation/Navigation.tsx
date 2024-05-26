@@ -1,9 +1,8 @@
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
+import { TabsNavigation } from '@/navigation/TabsNavigation';
 import { Dashboard } from '@/view/dashboard/Dashboard';
-
-import { TabsNavigation } from './TabsNavigation';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoutePaths {

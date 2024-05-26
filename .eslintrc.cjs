@@ -44,6 +44,6 @@ module.exports = {
       },
     ],
     'simple-import-sort/exports': 'error',
-    'no-restricted-imports': ['error', { patterns: ['../*'] }],
+    'no-restricted-imports': ['error', { patterns: ['.*'] }],
   },
 };

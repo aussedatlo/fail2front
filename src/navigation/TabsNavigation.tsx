@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Tabs } from 'antd';
 import styled from 'styled-components';
 
-import { RouteType } from './Navigation';
+import { RouteType } from '@/navigation/Navigation';
 
 const Title = styled.div`
   position: absolute;
