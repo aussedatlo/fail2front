@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tabs, TabsProps } from 'antd';
+import { Tabs } from 'antd';
 import styled from 'styled-components';
+
+import { RouteType } from './Navigation';
 
 const Title = styled.div`
   position: absolute;
@@ -9,27 +11,27 @@ const Title = styled.div`
   top: 0;
 `;
 
-const items: TabsProps['items'] = [
-  {
-    key: 'dashboard',
-    label: 'Dashboard',
-  },
-  {
-    key: 'jails',
-    label: 'Jails',
-  },
-  {
-    key: 'bans',
-    label: 'Bans',
-  },
-  {
-    key: 'history',
-    label: 'History',
-  },
-];
+type TabProps = { key: string; label: string };
 
-export const TabsNavigation: React.FC = () => {
+type TabsNavigationProps = {
+  routes: RouteType[];
+};
+
+export const TabsNavigation: React.FC<TabsNavigationProps> = ({ routes }) => {
   const navigate = useNavigate();
+
+  const items = useMemo(
+    () =>
+      routes.reduce(
+        (prev: TabProps[], curr: RouteType) => [
+          ...prev,
+          { key: curr.path, label: curr.path },
+        ],
+        [],
+      ),
+    [routes],
+  );
+
   return (
     <Tabs
       tabBarExtraContent={{
