@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { useBans } from '@/hooks/useBans';
+import { Fail2BanContext } from '@/context/fail2ban';
 
 export const Dashboard: React.FC = () => {
-  const bans = useBans();
+  const { bans } = useContext(Fail2BanContext);
 
   return <div>bans: {bans?.length}</div>;
 };

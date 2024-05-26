@@ -3,8 +3,12 @@ import ReactDOM from 'react-dom/client';
 
 import { Navigation } from '@/navigation/Navigation';
 
+import { Fail2BanContextProvider } from './context/fail2ban';
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Navigation />
+    <Fail2BanContextProvider>
+      <Navigation />
+    </Fail2BanContextProvider>
   </React.StrictMode>,
 );
