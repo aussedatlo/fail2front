@@ -30,7 +30,11 @@ export const Navigation: React.FC = () => {
         <Sidebar />
         <Routes>
           {routes.map((route) => (
-            <Route path={route.path} element={route.component} />
+            <Route
+              key={`nav-${route.path}`}
+              path={route.path}
+              element={route.component}
+            />
           ))}
         </Routes>
       </Root>
