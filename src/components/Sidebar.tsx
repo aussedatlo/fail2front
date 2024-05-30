@@ -1,6 +1,13 @@
 import { SyntheticEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { styled, Tab, Tabs, Typography } from '@mui/material';
+import {
+  CircularProgress,
+  Skeleton,
+  styled,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
 import { RoutePaths } from '@/navigation/Navigation';
@@ -22,33 +29,42 @@ const Subtitle = styled(Typography)`
 `;
 
 export const Sidebar: React.FC = () => {
-  const [value, setValue] = useState(0);
-  const { jails } = useContext(Fail2BanContext);
+  const [value, setValue] = useState<string>('dashboard');
+  const { jails, isLoaded } = useContext(Fail2BanContext);
   const navigate = useNavigate();
 
-  const handleChange = (_event: SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
 
-    if (newValue === 0) {
+    if (newValue === 'dashboard') {
       navigate(RoutePaths.Dashboard);
     } else {
-      navigate(RoutePaths.Jails, { state: { jail: jails![newValue - 1] } });
+      navigate(RoutePaths.Jails, { state: { jail: newValue } });
     }
   };
 
   return (
-    <StyledTabs
-      orientation="vertical"
-      variant="scrollable"
-      aria-label="Vertical tabs example"
-      value={value}
-      onChange={handleChange}
-    >
-      <StyledTab label="Dashboard" />
-      <Subtitle variant="subtitle2">Jails</Subtitle>
-      {jails?.map((jail) => (
-        <StyledTab key={`jail-${jail.name}`} label={jail.name} disableRipple />
-      ))}
-    </StyledTabs>
+    <>
+      <StyledTabs
+        orientation="vertical"
+        variant="scrollable"
+        aria-label="Vertical tabs example"
+        value={value}
+        onChange={handleChange}
+      >
+        <StyledTab label="Dashboard" value="dashboard" />
+        <Subtitle variant="subtitle2">Jails</Subtitle>
+        {isLoaded &&
+          jails &&
+          jails.map((jail) => (
+            <StyledTab
+              key={`jail-${jail.name}`}
+              label={jail.name}
+              value={jail.name}
+              disableRipple
+            />
+          ))}
+      </StyledTabs>
+    </>
   );
 };
