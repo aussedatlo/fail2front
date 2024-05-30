@@ -1,7 +1,6 @@
 import React from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
-import { TabsNavigation } from '@/navigation/TabsNavigation';
 import { Dashboard } from '@/view/dashboard/Dashboard';
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -24,7 +23,6 @@ const routes: RouteType[] = [
 export const Navigation: React.FC = () => {
   return (
     <HashRouter>
-      <TabsNavigation routes={routes} />
       <Routes>
         {routes.map((route) => (
           <Route path={route.path} element={route.component} />

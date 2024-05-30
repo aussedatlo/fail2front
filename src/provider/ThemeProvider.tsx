@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { theme } from 'antd';
 import { ThemeProvider } from 'styled-components';
 
 type ThemeProviderProps = {
@@ -9,12 +8,7 @@ type ThemeProviderProps = {
 const CustomThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
 }: React.PropsWithChildren) => {
-  const { token } = theme.useToken();
-  return (
-    <ThemeProvider theme={{ antd: token, base: { color: 'mediumseagreen' } }}>
-      {children}
-    </ThemeProvider>
-  );
+  return <ThemeProvider theme={{}}>{children}</ThemeProvider>;
 };
 
 export default CustomThemeProvider;
