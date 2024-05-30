@@ -9,7 +9,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <CustomThemeProvider>
       <Fail2BanContextProvider>
-        <Navigation />
+        <>
+          <Navigation />
+        </>
       </Fail2BanContextProvider>
     </CustomThemeProvider>
   </React.StrictMode>,
