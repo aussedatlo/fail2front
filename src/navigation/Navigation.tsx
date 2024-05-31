@@ -1,14 +1,14 @@
 import React from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Box, styled } from '@mui/material';
 
-import { Sidebar } from '@/components/Sidebar';
+import { Sidebar } from '@/navigation/Sidebar';
 import { Dashboard } from '@/view/dashboard/Dashboard';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoutePaths {
-  Dashboard = 'dashboard',
-  Jails = 'jails',
+  Dashboard = '/',
+  Jails = '/jails',
 }
 
 export type RouteType = { path: RoutePaths; component: React.ReactElement };
@@ -25,7 +25,7 @@ const Root = styled(Box)`
 
 export const Navigation: React.FC = () => {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Root>
         <Sidebar />
         <Routes>
@@ -38,6 +38,6 @@ export const Navigation: React.FC = () => {
           ))}
         </Routes>
       </Root>
-    </HashRouter>
+    </BrowserRouter>
   );
 };

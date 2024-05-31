@@ -1,10 +1,18 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import { AppContext } from '@/context/app';
 
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
   },
 });
 
@@ -15,8 +23,10 @@ type ThemeProviderProps = {
 const CustomThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
 }: React.PropsWithChildren) => {
+  const { theme } = useContext(AppContext);
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
       <CssBaseline />
       {children}
     </ThemeProvider>

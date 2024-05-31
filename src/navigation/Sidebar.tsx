@@ -1,13 +1,6 @@
 import { SyntheticEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  CircularProgress,
-  Skeleton,
-  styled,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material';
+import { styled, Tab, Tabs, Typography } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
 import { RoutePaths } from '@/navigation/Navigation';
