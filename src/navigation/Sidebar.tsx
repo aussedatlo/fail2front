@@ -1,6 +1,8 @@
 import { SyntheticEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { styled, Tab, Tabs, Typography } from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ShieldIcon from '@mui/icons-material/Shield';
+import { styled, Tab, Tabs } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
 import { RoutePaths } from '@/navigation/Navigation';
@@ -13,12 +15,9 @@ const StyledTabs = styled(Tabs)`
 
 const StyledTab = styled(Tab)`
   text-transform: none;
-  align-items: flex-start;
-`;
-
-const Subtitle = styled(Typography)`
-  text-transform: uppercase;
-  margin-left: 5px;
+  align-items: center;
+  justify-content: start;
+  min-height: 50px;
 `;
 
 export const Sidebar: React.FC = () => {
@@ -32,7 +31,7 @@ export const Sidebar: React.FC = () => {
     if (newValue === 'dashboard') {
       navigate(RoutePaths.Dashboard);
     } else {
-      navigate(RoutePaths.Jails, { state: { jail: newValue } });
+      navigate(RoutePaths.Jail.replace(':jail', newValue));
     }
   };
 
@@ -45,12 +44,20 @@ export const Sidebar: React.FC = () => {
         value={value}
         onChange={handleChange}
       >
-        <StyledTab label="Dashboard" value="dashboard" />
-        <Subtitle variant="subtitle2">Jails</Subtitle>
+        <StyledTab
+          icon={<DashboardIcon fontSize="small" />}
+          iconPosition="start"
+          label="Dashboard"
+          value="dashboard"
+          disableRipple
+        />
+
         {isLoaded &&
           jails &&
           jails.map((jail) => (
             <StyledTab
+              icon={<ShieldIcon fontSize="small" />}
+              iconPosition="start"
               key={`jail-${jail.name}`}
               label={jail.name}
               value={jail.name}

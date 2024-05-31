@@ -45,7 +45,7 @@ export const Fail2BanContextProvider: React.FC<
     Promise.all([refreshBans(), refreshJails()]).then(() => {
       setIsLoaded(true);
     });
-  });
+  }, [refreshBans, refreshJails]);
 
   return (
     <Fail2BanContext.Provider value={{ isLoaded, bans, jails }}>

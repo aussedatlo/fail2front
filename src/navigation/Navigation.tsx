@@ -3,24 +3,26 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Box, styled } from '@mui/material';
 
 import { Sidebar } from '@/navigation/Sidebar';
-import { Dashboard } from '@/view/dashboard/Dashboard';
+import { DashboardView } from '@/view/dashboard/Dashboard';
+import { JailView } from '@/view/jail/Jail';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoutePaths {
   Dashboard = '/',
-  Jails = '/jails',
+  Jail = '/jail/:jail',
 }
 
 export type RouteType = { path: RoutePaths; component: React.ReactElement };
 
 const routes: RouteType[] = [
-  { path: RoutePaths.Dashboard, component: <Dashboard /> },
-  { path: RoutePaths.Jails, component: <>Test</> },
+  { path: RoutePaths.Dashboard, component: <DashboardView /> },
+  { path: RoutePaths.Jail, component: <JailView /> },
 ];
 
 const Root = styled(Box)`
   display: flex;
   flex-direction: row;
+  flex-grow: 1;
 `;
 
 export const Navigation: React.FC = () => {

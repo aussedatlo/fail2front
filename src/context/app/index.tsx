@@ -1,6 +1,6 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | undefined;
 
 type AppContextProps = {
   theme: Theme;
@@ -8,7 +8,7 @@ type AppContextProps = {
 };
 
 const initialAppContext: AppContextProps = {
-  theme: 'light',
+  theme: undefined,
   setTheme: () => {},
 };
 
@@ -21,22 +21,31 @@ type AppContextProviderProps = {
 export const AppContextProvider: React.FC<AppContextProviderProps> = ({
   children,
 }: AppContextProviderProps) => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<Theme>();
+
+  const updateTheme = useCallback((theme: Theme) => {
+    if (!theme) return;
+
+    localStorage.setItem('theme', theme);
+    setTheme(theme);
+  }, []);
 
   useEffect(() => {
     const theme = localStorage.getItem('theme');
     if (theme) {
       setTheme(theme as 'light' | 'dark');
+    } else {
+      updateTheme('dark');
     }
-  }, [setTheme]);
-
-  useEffect(() => {
-    console.log('theme updated', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+  }, [updateTheme]);
 
   return (
-    <AppContext.Provider value={{ theme, setTheme }}>
+    <AppContext.Provider
+      value={{
+        theme,
+        setTheme: updateTheme,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
