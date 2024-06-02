@@ -5,6 +5,7 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import { Box, Button, Grid, styled, Typography, useTheme } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
+import { BanNowCard } from '@/view/jail/BanNowCard';
 import { IpBannedCard } from '@/view/jail/IpBannedCard';
 import { JailEvent, LastEventsCard } from '@/view/jail/LastEventsCard';
 import { LineChartCard } from '@/view/jail/LineChartCard';
@@ -134,7 +135,15 @@ export const JailView: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} lg={6}>
-          <LastEventsCard events={events} jail={jailData} />
+          <Grid container sx={{ flexGrow: 1 }} spacing={3}>
+            <Grid item xs={12}>
+              <LastEventsCard events={events} jail={jailData} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <BanNowCard jail={jailData} />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Root>
