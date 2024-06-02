@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import BlockIcon from '@mui/icons-material/Block';
-import DoneIcon from '@mui/icons-material/Done';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
   Box,
+  Button,
   Card,
   CardContent,
   Pagination,
@@ -13,7 +13,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -61,8 +60,10 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
   };
 
   return (
-    <Card sx={{ display: 'flex', height: '100%' }}>
-      <CardContent sx={{ flexGrow: 1 }}>
+    <Card>
+      <CardContent
+        sx={{ display: 'flex', flexDirection: 'column', maxHeight: '32em' }}
+      >
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Last events
         </Typography>
@@ -110,24 +111,26 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
                       {!jail.stats.ip_list.find(
                         (elem) => elem.ip === event.ip,
                       ) && (
-                        <Tooltip title="Ban" arrow placement="top">
-                          <BlockIcon
-                            color="secondary"
-                            onClick={() => onBan(event.ip)}
-                            sx={{ cursor: 'pointer', fontSize: '1.5em' }}
-                          />
-                        </Tooltip>
+                        <Button
+                          color="secondary"
+                          variant="outlined"
+                          sx={{ width: '6em' }}
+                          onClick={() => onBan(event.ip)}
+                        >
+                          Ban
+                        </Button>
                       )}
                       {jail.stats.ip_list.find(
                         (elem) => elem.ip === event.ip,
                       ) && (
-                        <Tooltip title="Unban" arrow placement="top">
-                          <DoneIcon
-                            color="primary"
-                            onClick={() => onUnban(event.ip)}
-                            sx={{ cursor: 'pointer', fontSize: '1.5em' }}
-                          />
-                        </Tooltip>
+                        <Button
+                          color="primary"
+                          variant="outlined"
+                          sx={{ width: '6em' }}
+                          onClick={() => onUnban(event.ip)}
+                        >
+                          unban
+                        </Button>
                       )}
                     </Box>
                   </TableCell>
@@ -140,8 +143,10 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
         <Box
           sx={{
             display: 'flex',
+            flex: 1,
             justifyContent: 'center',
-            marginTop: 3,
+            alignItems: 'end',
+            marginTop: 2,
           }}
         >
           <Pagination count={10} size="small" />
