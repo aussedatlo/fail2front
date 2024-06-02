@@ -79,7 +79,7 @@ export const JailView: React.FC = () => {
           <Grid container sx={{ flexGrow: 1 }} spacing={3}>
             <Grid item xs={3}>
               <StatCard
-                value={jailData.filter.failed}
+                value={jailData.filter.currently_failed}
                 title="Failed"
                 color={theme.palette.primary.main}
               />
@@ -96,7 +96,7 @@ export const JailView: React.FC = () => {
 
             <Grid item xs={3}>
               <StatCard
-                value={jailData.filter.currently_failed}
+                value={jailData.stats.currently_banned}
                 title="Banned"
                 color={theme.palette.secondary.main}
               />
