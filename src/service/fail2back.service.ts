@@ -3,23 +3,7 @@ import axios from 'axios';
 import { Ban } from '@/types/Ban';
 import { Jail } from '@/types/Jail';
 
-const getBans = async (): Promise<Ban[]> => {
-  const response = await axios.request<Ban[]>({
-    url: `/api/bans`,
-    method: 'GET',
-  });
-
-  return response.data;
-};
-
-const getJails = async (): Promise<Jail[]> => {
-  const response = await axios.request({
-    url: `/api/jails`,
-    method: 'GET',
-  });
-
-  return response.data;
-};
+/* health */
 
 const getHealthBack = async (): Promise<boolean> => {
   const response = await axios.request({
@@ -39,4 +23,53 @@ const getHealthBan = async (): Promise<boolean> => {
   return response.data ? true : false;
 };
 
-export default { getBans, getJails, getHealthBack, getHealthBan };
+/* bans */
+
+const getBans = async (): Promise<Ban[]> => {
+  const response = await axios.request<Ban[]>({
+    url: `/api/bans`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
+/* jails */
+
+const getJails = async (): Promise<Jail[]> => {
+  const response = await axios.request<Jail[]>({
+    url: `/api/jails`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
+const postJailsBan = async (jail: string, ip: string): Promise<boolean> => {
+  const response = await axios.request<boolean>({
+    url: `/api/jails/${jail}/ban`,
+    method: 'POST',
+    params: { ip },
+  });
+
+  return response.data;
+};
+
+const postJailsUnban = async (jail: string, ip: string): Promise<boolean> => {
+  const response = await axios.request<boolean>({
+    url: `/api/jails/${jail}/unban`,
+    method: 'POST',
+    params: { ip },
+  });
+
+  return response.data;
+};
+
+export default {
+  getHealthBack,
+  getHealthBan,
+  getBans,
+  getJails,
+  postJailsBan,
+  postJailsUnban,
+};

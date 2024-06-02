@@ -1,4 +1,6 @@
+import { useContext } from 'react';
 import BlockIcon from '@mui/icons-material/Block';
+import DoneIcon from '@mui/icons-material/Done';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
   Box,
@@ -11,8 +13,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
+
+import { Fail2BanContext } from '@/context/fail2ban';
+import fail2backService from '@/service/fail2back.service';
+import { Jail } from '@/types/Jail';
 
 export type JailEvent = {
   date: string;
@@ -22,9 +30,36 @@ export type JailEvent = {
 
 type LastEventsCardProps = {
   events: JailEvent[];
+  jail: Jail;
 };
 
-export const LastEventsCard: React.FC<LastEventsCardProps> = ({ events }) => {
+export const LastEventsCard: React.FC<LastEventsCardProps> = ({
+  events,
+  jail,
+}) => {
+  const { refreshJails } = useContext(Fail2BanContext);
+  const { enqueueSnackbar } = useSnackbar();
+
+  const onBan = async (ip: string) => {
+    const response = await fail2backService.postJailsBan(jail.name, ip);
+    if (response) {
+      enqueueSnackbar(`Ip ${ip} banned`, { variant: 'success' });
+      refreshJails();
+    } else {
+      enqueueSnackbar(`Unable to ban Ip ${ip}`, { variant: 'error' });
+    }
+  };
+
+  const onUnban = async (ip: string) => {
+    const response = await fail2backService.postJailsUnban(jail.name, ip);
+    if (response) {
+      enqueueSnackbar(`Ip ${ip} Unbanned`, { variant: 'success' });
+      refreshJails();
+    } else {
+      enqueueSnackbar(`Unable to ban Ip ${ip}`, { variant: 'error' });
+    }
+  };
+
   return (
     <Card sx={{ display: 'flex', height: '100%' }}>
       <CardContent sx={{ flexGrow: 1 }}>
@@ -39,6 +74,7 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ events }) => {
                 <TableCell>Time</TableCell>
                 <TableCell>Event</TableCell>
                 <TableCell>Ip Address</TableCell>
+                <TableCell align="right">Actions</TableCell>
               </TableRow>
             </TableHead>
 
@@ -51,20 +87,50 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ events }) => {
                       {event.type === 'Failed' ? (
                         <WarningIcon
                           color="primary"
-                          sx={{ marginRight: 2 }}
-                          fontSize="small"
+                          sx={{ marginRight: 2, fontSize: '1.5em' }}
                         />
                       ) : (
                         <BlockIcon
                           color="secondary"
-                          sx={{ marginRight: 2 }}
-                          fontSize="small"
+                          sx={{ marginRight: 2, fontSize: '1.5em' }}
                         />
                       )}
                       {event.type}
                     </Box>
                   </TableCell>
                   <TableCell>{event.ip}</TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flex: 1,
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      {!jail.stats.ip_list.find(
+                        (elem) => elem.ip === event.ip,
+                      ) && (
+                        <Tooltip title="Ban" arrow placement="top">
+                          <BlockIcon
+                            color="secondary"
+                            onClick={() => onBan(event.ip)}
+                            sx={{ cursor: 'pointer', fontSize: '1.5em' }}
+                          />
+                        </Tooltip>
+                      )}
+                      {jail.stats.ip_list.find(
+                        (elem) => elem.ip === event.ip,
+                      ) && (
+                        <Tooltip title="Unban" arrow placement="top">
+                          <DoneIcon
+                            color="primary"
+                            onClick={() => onUnban(event.ip)}
+                            sx={{ cursor: 'pointer', fontSize: '1.5em' }}
+                          />
+                        </Tooltip>
+                      )}
+                    </Box>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

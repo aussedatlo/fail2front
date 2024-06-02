@@ -7,7 +7,9 @@ import { Jail } from '@/types/Jail';
 type Fail2BanContextProps = {
   isLoaded: boolean;
   bans: Ban[] | undefined;
+  refreshBans: () => void;
   jails: Jail[] | undefined;
+  refreshJails: () => void;
   healthBack: boolean;
   healthBan: boolean;
 };
@@ -15,7 +17,9 @@ type Fail2BanContextProps = {
 const initialFail2BanContext: Fail2BanContextProps = {
   isLoaded: false,
   bans: [],
+  refreshBans: () => {},
   jails: [],
+  refreshJails: () => {},
   healthBack: false,
   healthBan: false,
 };
@@ -69,7 +73,15 @@ export const Fail2BanContextProvider: React.FC<
 
   return (
     <Fail2BanContext.Provider
-      value={{ isLoaded, bans, jails, healthBack, healthBan }}
+      value={{
+        isLoaded,
+        bans,
+        refreshBans,
+        jails,
+        refreshJails,
+        healthBack,
+        healthBan,
+      }}
     >
       {children}
     </Fail2BanContext.Provider>

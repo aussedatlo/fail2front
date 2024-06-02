@@ -52,7 +52,7 @@ export const JailView: React.FC = () => {
     { date: '2024-06-01 10:14:28', type: 'Banned', ip: '18.201.84.193' },
   ];
 
-  if (!jailData) {
+  if (!jailData || !jail) {
     return null;
   }
 
@@ -113,7 +113,7 @@ export const JailView: React.FC = () => {
         </Grid>
 
         <Grid item xs={12} lg={6}>
-          <LastEventsCard events={events} />
+          <LastEventsCard events={events} jail={jailData} />
         </Grid>
       </Grid>
     </Root>
