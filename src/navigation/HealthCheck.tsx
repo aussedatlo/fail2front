@@ -1,5 +1,5 @@
 import CircleIcon from '@mui/icons-material/Circle';
-import { Box, styled, Typography } from '@mui/material';
+import { Box, styled, Tooltip, Typography } from '@mui/material';
 import { keyframes } from '@mui/system';
 
 const blink = keyframes`
@@ -21,12 +21,14 @@ type HealthCheckProps = {
 
 export const HealthCheck: React.FC<HealthCheckProps> = ({ title, health }) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', margin: 1 }}>
-      <Typography variant="caption">{title}</Typography>
-      <BlinkedCircleIcon
-        sx={{ marginLeft: 1, fontSize: 8 }}
-        color={health ? 'primary' : 'secondary'}
-      />
-    </Box>
+    <Tooltip title={health ? 'Healthy' : 'Unhealthy'} arrow placement="top">
+      <Box sx={{ display: 'flex', alignItems: 'center', margin: 1 }}>
+        <Typography variant="caption">{title}</Typography>
+        <BlinkedCircleIcon
+          sx={{ marginLeft: 1, fontSize: 8 }}
+          color={health ? 'primary' : 'secondary'}
+        />
+      </Box>
+    </Tooltip>
   );
 };
