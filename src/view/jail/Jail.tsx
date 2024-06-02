@@ -6,6 +6,7 @@ import { Box, Button, Grid, styled, Typography, useTheme } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
 import { BanNowCard } from '@/view/jail/BanNowCard';
+import { ConfigCard } from '@/view/jail/ConfigCard';
 import { IpBannedCard } from '@/view/jail/IpBannedCard';
 import { JailEvent, LastEventsCard } from '@/view/jail/LastEventsCard';
 import { LineChartCard } from '@/view/jail/LineChartCard';
@@ -142,6 +143,10 @@ export const JailView: React.FC = () => {
 
             <Grid item xs={12}>
               <BanNowCard jail={jailData} />
+            </Grid>
+
+            <Grid item xs={12}>
+              <ConfigCard jail={jailData} />
             </Grid>
           </Grid>
         </Grid>
