@@ -21,4 +21,22 @@ const getJails = async (): Promise<Jail[]> => {
   return response.data;
 };
 
-export default { getBans, getJails };
+const getHealthBack = async (): Promise<boolean> => {
+  const response = await axios.request({
+    url: `/api/health/back`,
+    method: 'GET',
+  });
+
+  return response.data ? true : false;
+};
+
+const getHealthBan = async (): Promise<boolean> => {
+  const response = await axios.request({
+    url: `/api/health/ban`,
+    method: 'GET',
+  });
+
+  return response.data ? true : false;
+};
+
+export default { getBans, getJails, getHealthBack, getHealthBan };

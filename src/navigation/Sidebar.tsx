@@ -2,9 +2,10 @@ import { SyntheticEvent, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShieldIcon from '@mui/icons-material/Shield';
-import { styled, Tab, Tabs } from '@mui/material';
+import { Box, styled, Tab, Tabs } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
+import { HealthCheck } from '@/navigation/HealthCheck';
 import { RoutePaths } from '@/navigation/Navigation';
 
 const StyledTabs = styled(Tabs)`
@@ -22,7 +23,8 @@ const StyledTab = styled(Tab)`
 
 export const Sidebar: React.FC = () => {
   const [value, setValue] = useState<string>('dashboard');
-  const { jails, isLoaded } = useContext(Fail2BanContext);
+  const { jails, isLoaded, healthBack, healthBan } =
+    useContext(Fail2BanContext);
   const navigate = useNavigate();
 
   const handleChange = (_event: SyntheticEvent, newValue: string) => {
@@ -36,7 +38,7 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <StyledTabs
         orientation="vertical"
         variant="scrollable"
@@ -65,6 +67,13 @@ export const Sidebar: React.FC = () => {
             />
           ))}
       </StyledTabs>
-    </>
+
+      <Box sx={{ flex: 1 }} />
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', padding: 1 }}>
+        <HealthCheck title="fail2ban" health={healthBan} />
+        <HealthCheck title="fail2back" health={healthBack} />
+      </Box>
+    </Box>
   );
 };

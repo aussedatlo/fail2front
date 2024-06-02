@@ -8,12 +8,16 @@ type Fail2BanContextProps = {
   isLoaded: boolean;
   bans: Ban[] | undefined;
   jails: Jail[] | undefined;
+  healthBack: boolean;
+  healthBan: boolean;
 };
 
 const initialFail2BanContext: Fail2BanContextProps = {
   isLoaded: false,
   bans: [],
   jails: [],
+  healthBack: false,
+  healthBan: false,
 };
 
 export const Fail2BanContext = createContext<Fail2BanContextProps>(
@@ -29,7 +33,9 @@ export const Fail2BanContextProvider: React.FC<
 > = ({ children }: Fail2BanContextProviderProps) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [bans, setBans] = useState<Ban[]>();
-  const [jails, getJails] = useState<Jail[]>();
+  const [jails, setJails] = useState<Jail[]>();
+  const [healthBack, setHealthBack] = useState<boolean>(false);
+  const [healthBan, setHealthBan] = useState<boolean>(false);
 
   const refreshBans = useCallback(async () => {
     const result = await Fail2BackService.getBans();
@@ -38,17 +44,33 @@ export const Fail2BanContextProvider: React.FC<
 
   const refreshJails = useCallback(async () => {
     const result = await Fail2BackService.getJails();
-    getJails(result);
+    setJails(result);
+  }, []);
+
+  const refreshHealth = useCallback(async () => {
+    console.log('refreshHealth');
+    const healthBack = await Fail2BackService.getHealthBack();
+    const healthBan = await Fail2BackService.getHealthBan();
+    setHealthBack(healthBack);
+    setHealthBan(healthBan);
   }, []);
 
   useEffect(() => {
-    Promise.all([refreshBans(), refreshJails()]).then(() => {
+    Promise.all([refreshHealth(), refreshBans(), refreshJails()]).then(() => {
       setIsLoaded(true);
     });
-  }, [refreshBans, refreshJails]);
+
+    const timer = setInterval(() => {
+      refreshHealth();
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [refreshBans, refreshJails, refreshHealth]);
 
   return (
-    <Fail2BanContext.Provider value={{ isLoaded, bans, jails }}>
+    <Fail2BanContext.Provider
+      value={{ isLoaded, bans, jails, healthBack, healthBan }}
+    >
       {children}
     </Fail2BanContext.Provider>
   );
