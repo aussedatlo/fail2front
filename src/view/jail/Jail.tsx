@@ -79,13 +79,21 @@ export const JailView: React.FC = () => {
           <Grid container sx={{ flexGrow: 1 }} spacing={3}>
             <Grid item xs={3}>
               <StatCard
-                value={jailData.filter.currently_failed}
-                title="Failed"
+                value={jailData.filter.failed}
+                title="Total failed"
                 color={theme.palette.primary.main}
               />
             </Grid>
 
-            <Grid item xs={9}>
+            <Grid item xs={3}>
+              <StatCard
+                value={jailData.filter.currently_failed}
+                title="Current failed"
+                color={theme.palette.primary.main}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
               <LineChartCard
                 data={data2}
                 labels={labels}
@@ -96,13 +104,21 @@ export const JailView: React.FC = () => {
 
             <Grid item xs={3}>
               <StatCard
-                value={jailData.stats.currently_banned}
-                title="Banned"
+                value={jailData.stats.banned}
+                title="Total banned"
                 color={theme.palette.secondary.main}
               />
             </Grid>
 
-            <Grid item xs={9}>
+            <Grid item xs={3}>
+              <StatCard
+                value={jailData.stats.currently_banned}
+                title="Current banned"
+                color={theme.palette.secondary.main}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
               <LineChartCard
                 data={data1}
                 labels={labels}
