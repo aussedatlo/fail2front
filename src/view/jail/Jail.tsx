@@ -74,7 +74,7 @@ export const JailView: React.FC = () => {
       </TitleContainer>
 
       <Grid container sx={{ flexGrow: 1 }} spacing={3}>
-        <Grid item xs={6}>
+        <Grid item xs={12} lg={6}>
           <Grid container sx={{ flexGrow: 1 }} spacing={3}>
             <Grid item xs={3}>
               <StatCard
@@ -112,7 +112,7 @@ export const JailView: React.FC = () => {
           </Grid>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid item xs={12} lg={6}>
           <LastEventsCard events={events} />
         </Grid>
       </Grid>
