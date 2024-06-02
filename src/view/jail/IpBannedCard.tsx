@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -16,9 +16,8 @@ import {
 import { useSnackbar } from 'notistack';
 
 import { Fail2BanContext } from '@/context/fail2ban';
+import { IpContext } from '@/context/ip';
 import fail2backService from '@/service/fail2back.service';
-import IpService from '@/service/ipwhois.service';
-import { IpInfos } from '@/types/IpInfos';
 import { Jail } from '@/types/Jail';
 
 type IpBannedCardProps = {
@@ -26,18 +25,19 @@ type IpBannedCardProps = {
 };
 
 export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
-  const [ipInfos, setIpInfos] = useState<Record<string, IpInfos>>({});
+  const { ipInfos, addIp, isLoaded } = useContext(IpContext);
   const { enqueueSnackbar } = useSnackbar();
   const { refreshJails } = useContext(Fail2BanContext);
 
   useEffect(() => {
-    jail.stats.ip_list.forEach(async ({ ip }) => {
-      const infos = await IpService.getIpAddress(ip);
-      setIpInfos((prev) => ({ ...prev, [ip]: infos }));
-    });
-  }, [jail.stats.ip_list]);
+    if (!isLoaded) return;
 
-  console.log(ipInfos);
+    jail.stats.ip_list.forEach(({ ip }) => {
+      if (!ipInfos[ip]) {
+        addIp(ip);
+      }
+    });
+  }, [addIp, ipInfos, isLoaded, jail]);
 
   const onUnban = async (ip: string) => {
     const response = await fail2backService.postJailsUnban(jail.name, ip);
@@ -77,13 +77,13 @@ export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
                   <TableCell>
                     <Box sx={{ display: 'flex' }}>
                       <Box sx={{ marginRight: 1 }}>
-                        {ipInfos[ip]?.flag.emoji}
+                        {ipInfos[ip]?.flag?.emoji}
                       </Box>
                       {ipInfos[ip]?.country}
                     </Box>
                   </TableCell>
                   <TableCell>{ipInfos[ip]?.city}</TableCell>
-                  <TableCell>{ipInfos[ip]?.connection.isp}</TableCell>
+                  <TableCell>{ipInfos[ip]?.connection?.isp}</TableCell>
                   <TableCell align="right">
                     <Button
                       color="primary"
