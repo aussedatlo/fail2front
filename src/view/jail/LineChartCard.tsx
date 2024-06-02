@@ -15,7 +15,7 @@ export const LineChartCard: React.FC<LineChartCardProps> = ({
   color,
 }) => {
   return (
-    <Card sx={{ height: '100%' }}>
+    <Card>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {title}
@@ -23,7 +23,7 @@ export const LineChartCard: React.FC<LineChartCardProps> = ({
 
         <Box sx={{ margin: -6, marginTop: -8, marginBottom: -7 }}>
           <LineChart
-            height={242}
+            height={200}
             series={[{ data, area: true }]}
             leftAxis={null}
             bottomAxis={null}

@@ -5,6 +5,7 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import { Box, Button, Grid, styled, Typography, useTheme } from '@mui/material';
 
 import { Fail2BanContext } from '@/context/fail2ban';
+import { IpBannedCard } from '@/view/jail/IpBannedCard';
 import { JailEvent, LastEventsCard } from '@/view/jail/LastEventsCard';
 import { LineChartCard } from '@/view/jail/LineChartCard';
 import { StatCard } from '@/view/jail/StatCard';
@@ -108,6 +109,10 @@ export const JailView: React.FC = () => {
                 title="Banned over time"
                 color={theme.palette.secondary.main}
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              <IpBannedCard jail={jailData} />
             </Grid>
           </Grid>
         </Grid>
