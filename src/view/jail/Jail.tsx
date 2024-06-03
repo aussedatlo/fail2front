@@ -8,7 +8,7 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import { BanNowCard } from '@/view/jail/BanNowCard';
 import { ConfigCard } from '@/view/jail/ConfigCard';
 import { IpBannedCard } from '@/view/jail/IpBannedCard';
-import { JailEvent, LastEventsCard } from '@/view/jail/LastEventsCard';
+import { LastEventsCard } from '@/view/jail/LastEventsCard';
 import { LineChartCard } from '@/view/jail/LineChartCard';
 import { StatCard } from '@/view/jail/StatCard';
 
@@ -43,16 +43,6 @@ export const JailView: React.FC = () => {
     'Page E',
     'Page F',
     'Page G',
-  ];
-
-  const events: JailEvent[] = [
-    { date: '2024-06-01 09:53:28', type: 'Failed', ip: '135.148.100.196' },
-    { date: '2024-06-01 09:58:43', type: 'Banned', ip: '135.148.100.196' },
-    { date: '2024-06-01 10:03:58', type: 'Failed', ip: '3.249.164.188' },
-    { date: '2024-06-01 10:03:58', type: 'Failed', ip: '34.245.164.232' },
-    { date: '2024-06-01 10:09:13', type: 'Failed', ip: '18.201.84.193' },
-    { date: '2024-06-01 10:14:28', type: 'Failed', ip: '18.201.84.193' },
-    { date: '2024-06-01 10:14:28', type: 'Banned', ip: '18.201.84.193' },
   ];
 
   if (!jailData || !jail) {
@@ -138,7 +128,7 @@ export const JailView: React.FC = () => {
         <Grid item xs={12} lg={6}>
           <Grid container sx={{ flexGrow: 1 }} spacing={3}>
             <Grid item xs={12}>
-              <LastEventsCard events={events} jail={jailData} />
+              <LastEventsCard jail={jailData} />
             </Grid>
 
             <Grid item xs={12}>

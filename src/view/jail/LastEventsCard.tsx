@@ -1,4 +1,5 @@
-import { useContext } from 'react';
+import { useContext, useMemo, useState } from 'react';
+import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
@@ -21,23 +22,52 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import fail2backService from '@/service/fail2back.service';
 import { Jail } from '@/types/Jail';
 
-export type JailEvent = {
-  date: string;
+type JailEvent = {
+  date: Date;
   type: 'Banned' | 'Failed';
   ip: string;
 };
 
 type LastEventsCardProps = {
-  events: JailEvent[];
   jail: Jail;
 };
 
-export const LastEventsCard: React.FC<LastEventsCardProps> = ({
-  events,
-  jail,
-}) => {
-  const { refreshJails } = useContext(Fail2BanContext);
+export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
+  const { refreshJails, fails, globalBans } = useContext(Fail2BanContext);
   const { enqueueSnackbar } = useSnackbar();
+  const [page, setPage] = useState(1);
+
+  const formattedFails: JailEvent[] = useMemo(() => {
+    return (
+      fails?.[jail.name]?.map((fail) => ({
+        date: new Date(fail.timeoffail * 1000),
+        type: 'Failed',
+        ip: fail.ip,
+      })) ?? []
+    );
+  }, [fails, jail.name]);
+
+  const formattedBans: JailEvent[] = useMemo(() => {
+    return (
+      globalBans?.[jail.name]?.map((ban) => ({
+        date: new Date(ban.timeofban * 1000),
+        type: 'Banned',
+        ip: ban.ip,
+      })) ?? []
+    );
+  }, [globalBans, jail.name]);
+
+  const formattedEvents = [...formattedFails, ...formattedBans].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const rowsPerPage = 6;
+  const pageSize = Math.ceil(formattedEvents.length / rowsPerPage);
+
+  const formattedEventsPage = useMemo(
+    () => formattedEvents.slice((page - 1) * rowsPerPage, page * rowsPerPage),
+    [formattedEvents, page],
+  );
 
   const onBan = async (ip: string) => {
     const response = await fail2backService.postJailsBan(jail.name, ip);
@@ -59,10 +89,14 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
     }
   };
 
+  const onPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
   return (
     <Card>
       <CardContent
-        sx={{ display: 'flex', flexDirection: 'column', maxHeight: '32em' }}
+        sx={{ display: 'flex', flexDirection: 'column', height: '30em' }}
       >
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Last events
@@ -73,16 +107,24 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>Time</TableCell>
-                <TableCell>Event</TableCell>
-                <TableCell>Ip Address</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell sx={{ width: '15em' }}>Event</TableCell>
+                <TableCell sx={{ width: '15em' }}>Ip Address</TableCell>
+                <TableCell align="right" sx={{ width: '8em' }}>
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {events.map((event, index) => (
+              {formattedEventsPage.map((event, index) => (
                 <TableRow key={index}>
-                  <TableCell>{event.date}</TableCell>
+                  <TableCell>
+                    <ReactTimeAgo
+                      date={event.date}
+                      locale="en-US"
+                      timeStyle="round"
+                    />
+                  </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       {event.type === 'Failed' ? (
@@ -149,7 +191,7 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({
             marginTop: 2,
           }}
         >
-          <Pagination count={10} size="small" />
+          <Pagination count={pageSize} size="small" onChange={onPageChange} />
         </Box>
       </CardContent>
     </Card>

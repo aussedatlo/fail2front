@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 import { Ban } from '@/types/Ban';
+import { Fail } from '@/types/Fail';
+import { GlobalBan } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
 
 /* health */
@@ -65,6 +67,28 @@ const postJailsUnban = async (jail: string, ip: string): Promise<boolean> => {
   return response.data;
 };
 
+/* fails */
+
+const getFails = async (jail: string): Promise<Fail[]> => {
+  const response = await axios.request<Fail[]>({
+    url: `/api/fails/${jail}`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
+/* globalbans */
+
+const getGlobalBans = async (jail: string): Promise<GlobalBan[]> => {
+  const response = await axios.request<GlobalBan[]>({
+    url: `/api/globalbans/${jail}`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
 export default {
   getHealthBack,
   getHealthBan,
@@ -72,4 +96,6 @@ export default {
   getJails,
   postJailsBan,
   postJailsUnban,
+  getFails,
+  getGlobalBans,
 };

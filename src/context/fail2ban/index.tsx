@@ -2,6 +2,8 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 
 import Fail2BackService from '@/service/fail2back.service';
 import { Ban } from '@/types/Ban';
+import { Fail } from '@/types/Fail';
+import { GlobalBan } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
 
 type Fail2BanContextProps = {
@@ -10,6 +12,8 @@ type Fail2BanContextProps = {
   refreshBans: () => void;
   jails: Jail[] | undefined;
   refreshJails: () => void;
+  fails: Record<string, Fail[]> | undefined;
+  globalBans: Record<string, GlobalBan[]> | undefined;
   healthBack: boolean;
   healthBan: boolean;
 };
@@ -20,6 +24,8 @@ const initialFail2BanContext: Fail2BanContextProps = {
   refreshBans: () => {},
   jails: [],
   refreshJails: () => {},
+  fails: {},
+  globalBans: {},
   healthBack: false,
   healthBan: false,
 };
@@ -38,6 +44,8 @@ export const Fail2BanContextProvider: React.FC<
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [bans, setBans] = useState<Ban[]>();
   const [jails, setJails] = useState<Jail[]>();
+  const [fails, setFails] = useState<Record<string, Fail[]>>({});
+  const [globalBans, setGlobalBans] = useState<Record<string, GlobalBan[]>>({});
   const [healthBack, setHealthBack] = useState<boolean>(false);
   const [healthBan, setHealthBan] = useState<boolean>(false);
 
@@ -48,6 +56,14 @@ export const Fail2BanContextProvider: React.FC<
 
   const refreshJails = useCallback(async () => {
     const result = await Fail2BackService.getJails();
+
+    result.map(async (jail) => {
+      const fails = await Fail2BackService.getFails(jail.name);
+      setFails((prev) => ({ ...prev, [jail.name]: fails }));
+      const globalBans = await Fail2BackService.getGlobalBans(jail.name);
+      setGlobalBans((prev) => ({ ...prev, [jail.name]: globalBans }));
+    });
+
     setJails(result);
   }, []);
 
@@ -79,6 +95,8 @@ export const Fail2BanContextProvider: React.FC<
         refreshBans,
         jails,
         refreshJails,
+        fails,
+        globalBans,
         healthBack,
         healthBan,
       }}
