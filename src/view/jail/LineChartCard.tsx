@@ -1,12 +1,13 @@
 import { Box, Typography } from '@mui/material';
 import { areaElementClasses, LineChart } from '@mui/x-charts';
 
+import { useSize } from '@/provider/SizeProvider';
+
 type LineChartCardProps = {
   data: number[];
   labels: string[];
   title: string;
   color: string;
-  height: number;
 };
 
 export const LineChartCard: React.FC<LineChartCardProps> = ({
@@ -14,8 +15,9 @@ export const LineChartCard: React.FC<LineChartCardProps> = ({
   labels,
   title,
   color,
-  height,
 }) => {
+  const height = useSize().height ?? 0;
+
   return (
     <>
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>

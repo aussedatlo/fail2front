@@ -47,8 +47,6 @@ export const JailView: React.FC = () => {
   const { jails, stats } = useContext(Fail2BanContext);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const chartFailedRef = useResizeObserver();
-  const chartBannedRef = useResizeObserver();
   const { ref, width } = useResizeObserver();
 
   const jailData = jails?.find((j) => j.name === jail);
@@ -140,20 +138,14 @@ export const JailView: React.FC = () => {
           </Box>
 
           <Box key="failed-graph">
-            <Box
-              ref={chartFailedRef.ref}
-              sx={{ display: 'flex', height: '100%', flex: 1 }}
-            >
-              <Tile isEditMode={isEditMode}>
-                <LineChartCard
-                  height={chartFailedRef.height ?? 0}
-                  data={dataCurrentlyFailed ?? []}
-                  labels={labels ?? []}
-                  title="Failed over time"
-                  color={theme.palette.primary.main}
-                />
-              </Tile>
-            </Box>
+            <Tile isEditMode={isEditMode}>
+              <LineChartCard
+                data={dataCurrentlyFailed ?? []}
+                labels={labels ?? []}
+                title="Failed over time"
+                color={theme.palette.primary.main}
+              />
+            </Tile>
           </Box>
 
           <Box key="banned-total">
@@ -177,20 +169,14 @@ export const JailView: React.FC = () => {
           </Box>
 
           <Box key="banned-graph">
-            <Box
-              ref={chartBannedRef.ref}
-              sx={{ display: 'flex', height: '100%', flex: 1 }}
-            >
-              <Tile isEditMode={isEditMode}>
-                <LineChartCard
-                  height={chartBannedRef.height ?? 0}
-                  data={dataCurrentlyBanned ?? []}
-                  labels={labels ?? []}
-                  title="Banned over time"
-                  color={theme.palette.secondary.main}
-                />
-              </Tile>
-            </Box>
+            <Tile isEditMode={isEditMode}>
+              <LineChartCard
+                data={dataCurrentlyBanned ?? []}
+                labels={labels ?? []}
+                title="Banned over time"
+                color={theme.palette.secondary.main}
+              />
+            </Tile>
           </Box>
 
           <Box key="ip-banned">
