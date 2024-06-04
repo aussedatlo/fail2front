@@ -1,9 +1,21 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import ShieldIcon from '@mui/icons-material/Shield';
-import { Box, Button, Grid, styled, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  styled,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import useResizeObserver from 'use-resize-observer';
 
+import { Grid } from '@/components/Grid';
+import { Tile } from '@/components/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { BanNowCard } from '@/view/jail/BanNowCard';
 import { ConfigCard } from '@/view/jail/ConfigCard';
@@ -26,9 +38,14 @@ const TitleContainer = styled(Box)`
 `;
 
 export const JailView: React.FC = () => {
+  const theme = useTheme();
   const { jail } = useParams();
   const { jails } = useContext(Fail2BanContext);
-  const theme = useTheme();
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const chartFailedRef = useResizeObserver();
+  const chartBannedRef = useResizeObserver();
+  const { ref, width } = useResizeObserver();
 
   const jailData = jails?.find((j) => j.name === jail);
 
@@ -50,97 +67,144 @@ export const JailView: React.FC = () => {
   }
 
   return (
-    <Root>
+    <Root ref={ref}>
       <TitleContainer>
         <ShieldIcon fontSize="large" sx={{ marginRight: 2 }} />
         <Typography variant="h5">{jailData.name}</Typography>
 
         <Box sx={{ flex: 1 }} />
 
-        <Button
-          startIcon={<DeleteOutlineIcon />}
-          variant="contained"
-          color="secondary"
-        >
-          Disable
-        </Button>
+        {!isEditMode ? (
+          <Tooltip title="Edit layout" arrow>
+            <Button
+              onClick={() => setIsEditMode(true)}
+              sx={{ marginRight: 1 }}
+              variant="contained"
+            >
+              <DashboardCustomizeIcon />
+            </Button>
+          </Tooltip>
+        ) : (
+          <Tooltip title="Save layout" arrow>
+            <Button
+              onClick={() => setIsEditMode(false)}
+              sx={{ marginRight: 1 }}
+              variant="contained"
+              color="secondary"
+            >
+              <SaveIcon />
+            </Button>
+          </Tooltip>
+        )}
+
+        <Tooltip title="Edit Jail" arrow>
+          <Button sx={{ marginRight: 1 }} variant="contained">
+            <EditIcon />
+          </Button>
+        </Tooltip>
       </TitleContainer>
 
-      <Grid container sx={{ flexGrow: 1 }} spacing={3}>
-        <Grid item xs={12} lg={6}>
-          <Grid container sx={{ flexGrow: 1 }} spacing={3}>
-            <Grid item xs={3}>
+      {width && (
+        <Grid width={width} type="jail" isEditMode={isEditMode}>
+          <Box key="failed-total">
+            <Tile isEditMode={isEditMode}>
               <StatCard
                 value={jailData.filter.failed}
                 title="Total failed"
                 color={theme.palette.primary.main}
               />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={3}>
+          <Box key="failed-current">
+            <Tile isEditMode={isEditMode}>
               <StatCard
                 value={jailData.filter.currently_failed}
                 title="Current failed"
                 color={theme.palette.primary.main}
               />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={6}>
-              <LineChartCard
-                data={data2}
-                labels={labels}
-                title="Failed over time"
-                color={theme.palette.primary.main}
-              />
-            </Grid>
+          <Box key="failed-graph">
+            <Box
+              ref={chartFailedRef.ref}
+              sx={{ display: 'flex', height: '100%', flex: 1 }}
+            >
+              <Tile isEditMode={isEditMode}>
+                <LineChartCard
+                  height={chartFailedRef.height ?? 0}
+                  data={data2}
+                  labels={labels}
+                  title="Failed over time"
+                  color={theme.palette.primary.main}
+                />
+              </Tile>
+            </Box>
+          </Box>
 
-            <Grid item xs={3}>
+          <Box key="banned-total">
+            <Tile isEditMode={isEditMode}>
               <StatCard
                 value={jailData.stats.banned}
                 title="Total banned"
                 color={theme.palette.secondary.main}
               />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={3}>
+          <Box key="banned-current">
+            <Tile isEditMode={isEditMode}>
               <StatCard
                 value={jailData.stats.currently_banned}
                 title="Current banned"
                 color={theme.palette.secondary.main}
               />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={6}>
-              <LineChartCard
-                data={data1}
-                labels={labels}
-                title="Banned over time"
-                color={theme.palette.secondary.main}
-              />
-            </Grid>
+          <Box key="banned-graph">
+            <Box
+              ref={chartBannedRef.ref}
+              sx={{ display: 'flex', height: '100%', flex: 1 }}
+            >
+              <Tile isEditMode={isEditMode}>
+                <LineChartCard
+                  height={chartBannedRef.height ?? 0}
+                  data={data1}
+                  labels={labels}
+                  title="Banned over time"
+                  color={theme.palette.secondary.main}
+                />
+              </Tile>
+            </Box>
+          </Box>
 
-            <Grid item xs={12}>
+          <Box key="ip-banned">
+            <Tile isEditMode={isEditMode}>
               <IpBannedCard jail={jailData} />
-            </Grid>
-          </Grid>
-        </Grid>
+            </Tile>
+          </Box>
 
-        <Grid item xs={12} lg={6}>
-          <Grid container sx={{ flexGrow: 1 }} spacing={3}>
-            <Grid item xs={12}>
+          <Box key="last-events">
+            <Tile isEditMode={isEditMode}>
               <LastEventsCard jail={jailData} />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={12}>
+          <Box key="ban-now">
+            <Tile isEditMode={isEditMode}>
               <BanNowCard jail={jailData} />
-            </Grid>
+            </Tile>
+          </Box>
 
-            <Grid item xs={12}>
+          <Box key="config">
+            <Tile isEditMode={isEditMode}>
               <ConfigCard jail={jailData} />
-            </Grid>
-          </Grid>
+            </Tile>
+          </Box>
         </Grid>
-      </Grid>
+      )}
     </Root>
   );
 };

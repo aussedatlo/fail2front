@@ -2,8 +2,6 @@ import { useContext, useEffect } from 'react';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Pagination,
   Table,
   TableBody,
@@ -50,68 +48,64 @@ export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
   };
 
   return (
-    <Card>
-      <CardContent
-        sx={{ display: 'flex', flexDirection: 'column', maxHeight: '32em' }}
-      >
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Banned Ips
-        </Typography>
+    <>
+      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+        Banned Ips
+      </Typography>
 
-        <TableContainer component={Box} sx={{ marginTop: 2 }}>
-          <Table size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Ip Address</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell>Provider</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
+      <TableContainer component={Box} sx={{ marginTop: 2 }}>
+        <Table size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Ip Address</TableCell>
+              <TableCell>Country</TableCell>
+              <TableCell>City</TableCell>
+              <TableCell>Provider</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
 
-            <TableBody>
-              {jail.stats.ip_list.map(({ ip }) => (
-                <TableRow key={ip}>
-                  <TableCell>{ip}</TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex' }}>
-                      <Box sx={{ marginRight: 1 }}>
-                        {ipInfos[ip]?.flag?.emoji}
-                      </Box>
-                      {ipInfos[ip]?.country}
+          <TableBody>
+            {jail.stats.ip_list.map(({ ip }) => (
+              <TableRow key={ip}>
+                <TableCell>{ip}</TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex' }}>
+                    <Box sx={{ marginRight: 1 }}>
+                      {ipInfos[ip]?.flag?.emoji}
                     </Box>
-                  </TableCell>
-                  <TableCell>{ipInfos[ip]?.city}</TableCell>
-                  <TableCell>{ipInfos[ip]?.connection?.isp}</TableCell>
-                  <TableCell align="right">
-                    <Button
-                      color="primary"
-                      variant="outlined"
-                      sx={{ width: '6em' }}
-                      onClick={() => onUnban(ip)}
-                    >
-                      unban
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                    {ipInfos[ip]?.country}
+                  </Box>
+                </TableCell>
+                <TableCell>{ipInfos[ip]?.city}</TableCell>
+                <TableCell>{ipInfos[ip]?.connection?.isp}</TableCell>
+                <TableCell align="right">
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    sx={{ width: '6em' }}
+                    onClick={() => onUnban(ip)}
+                  >
+                    unban
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-        <Box
-          sx={{
-            display: 'flex',
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'end',
-            marginTop: 2,
-          }}
-        >
-          <Pagination count={10} size="small" />
-        </Box>
-      </CardContent>
-    </Card>
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'end',
+          marginTop: 2,
+        }}
+      >
+        <Pagination count={10} size="small" />
+      </Box>
+    </>
   );
 };

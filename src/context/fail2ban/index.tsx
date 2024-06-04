@@ -12,6 +12,7 @@ type Fail2BanContextProps = {
   refreshBans: () => void;
   jails: Jail[] | undefined;
   refreshJails: () => void;
+  refreshJail: (jail: Jail) => void;
   fails: Record<string, Fail[]> | undefined;
   globalBans: Record<string, GlobalBan[]> | undefined;
   healthBack: boolean;
@@ -24,6 +25,7 @@ const initialFail2BanContext: Fail2BanContextProps = {
   refreshBans: () => {},
   jails: [],
   refreshJails: () => {},
+  refreshJail: () => {},
   fails: {},
   globalBans: {},
   healthBack: false,
@@ -67,6 +69,13 @@ export const Fail2BanContextProvider: React.FC<
     setJails(result);
   }, []);
 
+  const refreshJail = useCallback(async (jail: Jail) => {
+    const fails = await Fail2BackService.getFails(jail.name);
+    setFails((prev) => ({ ...prev, [jail.name]: fails }));
+    const globalBans = await Fail2BackService.getGlobalBans(jail.name);
+    setGlobalBans((prev) => ({ ...prev, [jail.name]: globalBans }));
+  }, []);
+
   const refreshHealth = useCallback(async () => {
     console.log('refreshHealth');
     const healthBack = await Fail2BackService.getHealthBack();
@@ -95,6 +104,7 @@ export const Fail2BanContextProvider: React.FC<
         refreshBans,
         jails,
         refreshJails,
+        refreshJail,
         fails,
         globalBans,
         healthBack,

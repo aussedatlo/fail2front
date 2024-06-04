@@ -11,6 +11,9 @@ import { Navigation } from '@/navigation/Navigation';
 import CustomThemeProvider from '@/provider/ThemeProvider';
 import { AppBar } from '@/view/appBar/AppBar';
 
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+
 TimeAgo.addDefaultLocale(en);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

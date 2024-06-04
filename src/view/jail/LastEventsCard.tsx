@@ -1,12 +1,10 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Pagination,
   Table,
   TableBody,
@@ -33,9 +31,20 @@ type LastEventsCardProps = {
 };
 
 export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
-  const { refreshJails, fails, globalBans } = useContext(Fail2BanContext);
+  const { refreshJails, refreshJail, fails, globalBans } =
+    useContext(Fail2BanContext);
   const { enqueueSnackbar } = useSnackbar();
   const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      refreshJail(jail);
+    }, 10000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [jail, refreshJail]);
 
   const formattedFails: JailEvent[] = useMemo(() => {
     return (
@@ -94,106 +103,100 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
   };
 
   return (
-    <Card>
-      <CardContent
-        sx={{ display: 'flex', flexDirection: 'column', height: '30em' }}
-      >
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          Last events
-        </Typography>
+    <>
+      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+        Last events
+      </Typography>
 
-        <TableContainer component={Box} sx={{ marginTop: 2 }}>
-          <Table size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Time</TableCell>
-                <TableCell sx={{ width: '15em' }}>Event</TableCell>
-                <TableCell sx={{ width: '15em' }}>Ip Address</TableCell>
-                <TableCell align="right" sx={{ width: '8em' }}>
-                  Actions
+      <TableContainer component={Box} sx={{ marginTop: 2 }}>
+        <Table size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={{ width: '10em' }}>Time</TableCell>
+              <TableCell sx={{ width: '10em' }}>Event</TableCell>
+              <TableCell>Ip Address</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {formattedEventsPage.map((event, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <ReactTimeAgo
+                    date={event.date}
+                    locale="en-US"
+                    timeStyle="round"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {event.type === 'Failed' ? (
+                      <WarningIcon
+                        color="primary"
+                        sx={{ marginRight: 2, fontSize: '1.5em' }}
+                      />
+                    ) : (
+                      <BlockIcon
+                        color="secondary"
+                        sx={{ marginRight: 2, fontSize: '1.5em' }}
+                      />
+                    )}
+                    {event.type}
+                  </Box>
+                </TableCell>
+                <TableCell>{event.ip}</TableCell>
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flex: 1,
+                      justifyContent: 'flex-end',
+                    }}
+                  >
+                    {!jail.stats.ip_list.find(
+                      (elem) => elem.ip === event.ip,
+                    ) && (
+                      <Button
+                        color="secondary"
+                        variant="outlined"
+                        sx={{ width: '6em' }}
+                        onClick={() => onBan(event.ip)}
+                      >
+                        Ban
+                      </Button>
+                    )}
+                    {jail.stats.ip_list.find(
+                      (elem) => elem.ip === event.ip,
+                    ) && (
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        sx={{ width: '6em' }}
+                        onClick={() => onUnban(event.ip)}
+                      >
+                        unban
+                      </Button>
+                    )}
+                  </Box>
                 </TableCell>
               </TableRow>
-            </TableHead>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-            <TableBody>
-              {formattedEventsPage.map((event, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <ReactTimeAgo
-                      date={event.date}
-                      locale="en-US"
-                      timeStyle="round"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      {event.type === 'Failed' ? (
-                        <WarningIcon
-                          color="primary"
-                          sx={{ marginRight: 2, fontSize: '1.5em' }}
-                        />
-                      ) : (
-                        <BlockIcon
-                          color="secondary"
-                          sx={{ marginRight: 2, fontSize: '1.5em' }}
-                        />
-                      )}
-                      {event.type}
-                    </Box>
-                  </TableCell>
-                  <TableCell>{event.ip}</TableCell>
-                  <TableCell>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flex: 1,
-                        justifyContent: 'flex-end',
-                      }}
-                    >
-                      {!jail.stats.ip_list.find(
-                        (elem) => elem.ip === event.ip,
-                      ) && (
-                        <Button
-                          color="secondary"
-                          variant="outlined"
-                          sx={{ width: '6em' }}
-                          onClick={() => onBan(event.ip)}
-                        >
-                          Ban
-                        </Button>
-                      )}
-                      {jail.stats.ip_list.find(
-                        (elem) => elem.ip === event.ip,
-                      ) && (
-                        <Button
-                          color="primary"
-                          variant="outlined"
-                          sx={{ width: '6em' }}
-                          onClick={() => onUnban(event.ip)}
-                        >
-                          unban
-                        </Button>
-                      )}
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        <Box
-          sx={{
-            display: 'flex',
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'end',
-            marginTop: 2,
-          }}
-        >
-          <Pagination count={pageSize} size="small" onChange={onPageChange} />
-        </Box>
-      </CardContent>
-    </Card>
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'end',
+          marginTop: 2,
+        }}
+      >
+        <Pagination count={pageSize} size="small" onChange={onPageChange} />
+      </Box>
+    </>
   );
 };
