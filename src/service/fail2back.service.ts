@@ -1,10 +1,13 @@
 import axios from 'axios';
 
 import { Ban } from '@/types/Ban';
-import { Fail } from '@/types/Fail';
-import { GlobalBan } from '@/types/GlobalBan';
+import { Fail, Fails } from '@/types/Fail';
+import { GlobalBan, GlobalBans } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
-import { StatHistoryFormatted } from '@/types/StatHistoryFormatted';
+import {
+  StatsHistory,
+  StatsHistoryFormatted,
+} from '@/types/StatHistoryFormatted';
 
 /* health */
 
@@ -70,7 +73,17 @@ const postJailsUnban = async (jail: string, ip: string): Promise<boolean> => {
 
 /* fails */
 
-const getFails = async (jail: string): Promise<Fail[]> => {
+const getFails = async (): Promise<Fails> => {
+  const response = await axios.request<Fails>({
+    url: `/api/fails`,
+    method: 'GET',
+    params: { group_by: 'jail' },
+  });
+
+  return response.data;
+};
+
+const getFailsByJail = async (jail: string): Promise<Fail[]> => {
   const response = await axios.request<Fail[]>({
     url: `/api/fails/${jail}`,
     method: 'GET',
@@ -81,7 +94,17 @@ const getFails = async (jail: string): Promise<Fail[]> => {
 
 /* globalbans */
 
-const getGlobalBans = async (jail: string): Promise<GlobalBan[]> => {
+const getGlobalBans = async (): Promise<GlobalBans> => {
+  const response = await axios.request<GlobalBans>({
+    url: `/api/globalbans`,
+    method: 'GET',
+    params: { group_by: 'jail' },
+  });
+
+  return response.data;
+};
+
+const getGlobalBansByJail = async (jail: string): Promise<GlobalBan[]> => {
   const response = await axios.request<GlobalBan[]>({
     url: `/api/globalbans/${jail}`,
     method: 'GET',
@@ -92,10 +115,20 @@ const getGlobalBans = async (jail: string): Promise<GlobalBan[]> => {
 
 /* stats */
 
-const getStatHistoryFormatted = async (
+const getStatHistoryFormatted = async (): Promise<StatsHistoryFormatted> => {
+  const response = await axios.request<StatsHistoryFormatted>({
+    url: `/api/stats/history/formatted`,
+    method: 'GET',
+    params: { group_by: 'jail' },
+  });
+
+  return response.data;
+};
+
+const getStatHistoryFormattedByJail = async (
   jail: string,
-): Promise<StatHistoryFormatted> => {
-  const response = await axios.request<StatHistoryFormatted>({
+): Promise<StatsHistory> => {
+  const response = await axios.request<StatsHistory>({
     url: `/api/stats/history/${jail}/formatted`,
     method: 'GET',
   });
@@ -111,6 +144,9 @@ export default {
   postJailsBan,
   postJailsUnban,
   getFails,
+  getFailsByJail,
   getGlobalBans,
+  getGlobalBansByJail,
   getStatHistoryFormatted,
+  getStatHistoryFormattedByJail,
 };

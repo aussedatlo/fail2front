@@ -4,3 +4,5 @@ export type Fail = {
   timeoffail: number;
   match: string;
 };
+
+export type Fails = Record<string, Fail[]>;

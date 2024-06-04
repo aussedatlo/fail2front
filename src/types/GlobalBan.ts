@@ -7,3 +7,5 @@ export type GlobalBan = {
     failures: number;
   };
 };
+
+export type GlobalBans = Record<string, GlobalBan[]>;
