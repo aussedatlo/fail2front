@@ -4,21 +4,30 @@ import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
 import {
   Box,
-  Button,
-  Pagination,
+  styled,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
 
 import { Fail2BanContext } from '@/context/fail2ban';
-import fail2backService from '@/service/fail2back.service';
+import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';
+
+const TextContainer = styled(Box)({
+  display: 'flex',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  height: 40,
+  alignItems: 'center',
+  justifyContent: 'start',
+});
 
 type JailEvent = {
   date: Date;
@@ -31,10 +40,9 @@ type LastEventsCardProps = {
 };
 
 export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
-  const { refreshJails, refreshJail, fails, globalBans } =
-    useContext(Fail2BanContext);
-  const { enqueueSnackbar } = useSnackbar();
-  const [page, setPage] = useState(1);
+  const { refreshJail, fails, globalBans } = useContext(Fail2BanContext);
+  const [page, setPage] = useState(0);
+  const height = useSize().height ?? 0;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -70,36 +78,19 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
   );
 
-  const rowsPerPage = 6;
-  const pageSize = Math.ceil(formattedEvents.length / rowsPerPage);
+  // height - 150 because of the pagination / 50 because of the row height
+  const rowsPerPage = Math.ceil((height - 180) / 40);
 
   const formattedEventsPage = useMemo(
-    () => formattedEvents.slice((page - 1) * rowsPerPage, page * rowsPerPage),
-    [formattedEvents, page],
+    () => formattedEvents.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [formattedEvents, page, rowsPerPage],
   );
 
-  const onBan = async (ip: string) => {
-    const response = await fail2backService.postJailsBan(jail.name, ip);
-    if (response) {
-      enqueueSnackbar(`Ip ${ip} banned`, { variant: 'success' });
-      refreshJails();
-    } else {
-      enqueueSnackbar(`Unable to ban Ip ${ip}`, { variant: 'error' });
-    }
-  };
-
-  const onUnban = async (ip: string) => {
-    const response = await fail2backService.postJailsUnban(jail.name, ip);
-    if (response) {
-      enqueueSnackbar(`Ip ${ip} Unbanned`, { variant: 'success' });
-      refreshJails();
-    } else {
-      enqueueSnackbar(`Unable to ban Ip ${ip}`, { variant: 'error' });
-    }
-  };
-
-  const onPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+  const onPageChange = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number,
+  ) => {
+    setPage(page);
   };
 
   return (
@@ -112,91 +103,56 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
         <Table size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ width: '10em' }}>Time</TableCell>
-              <TableCell sx={{ width: '10em' }}>Event</TableCell>
+              <TableCell>Time</TableCell>
               <TableCell>Ip Address</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>Event</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {formattedEventsPage.map((event, index) => (
               <TableRow key={index}>
-                <TableCell>
-                  <ReactTimeAgo
-                    date={event.date}
-                    locale="en-US"
-                    timeStyle="round"
-                  />
+                <TableCell padding="none">
+                  <TextContainer>
+                    <ReactTimeAgo
+                      date={event.date}
+                      locale="en-US"
+                      timeStyle="round"
+                    />
+                  </TextContainer>
                 </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <TableCell padding="none">
+                  <TextContainer>{event.ip}</TextContainer>
+                </TableCell>
+                <TableCell padding="none">
+                  <TextContainer>
                     {event.type === 'Failed' ? (
                       <WarningIcon
                         color="primary"
-                        sx={{ marginRight: 2, fontSize: '1.5em' }}
+                        sx={{ marginRight: 1, fontSize: '1.2em' }}
                       />
                     ) : (
                       <BlockIcon
                         color="secondary"
-                        sx={{ marginRight: 2, fontSize: '1.5em' }}
+                        sx={{ marginRight: 1, fontSize: '1.2em' }}
                       />
                     )}
                     {event.type}
-                  </Box>
-                </TableCell>
-                <TableCell>{event.ip}</TableCell>
-                <TableCell>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flex: 1,
-                      justifyContent: 'flex-end',
-                    }}
-                  >
-                    {!jail.stats.ip_list.find(
-                      (elem) => elem.ip === event.ip,
-                    ) && (
-                      <Button
-                        color="secondary"
-                        variant="outlined"
-                        sx={{ width: '6em' }}
-                        onClick={() => onBan(event.ip)}
-                      >
-                        Ban
-                      </Button>
-                    )}
-                    {jail.stats.ip_list.find(
-                      (elem) => elem.ip === event.ip,
-                    ) && (
-                      <Button
-                        color="primary"
-                        variant="outlined"
-                        sx={{ width: '6em' }}
-                        onClick={() => onUnban(event.ip)}
-                      >
-                        unban
-                      </Button>
-                    )}
-                  </Box>
+                  </TextContainer>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Box
-        sx={{
-          display: 'flex',
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'end',
-          marginTop: 2,
-        }}
-      >
-        <Pagination count={pageSize} size="small" onChange={onPageChange} />
-      </Box>
+      <TablePagination
+        rowsPerPageOptions={[]}
+        component={Box}
+        count={formattedEvents.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={onPageChange}
+      />
     </>
   );
 };
