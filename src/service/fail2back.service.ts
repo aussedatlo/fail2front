@@ -4,6 +4,7 @@ import { Ban } from '@/types/Ban';
 import { Fail } from '@/types/Fail';
 import { GlobalBan } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
+import { StatHistoryFormatted } from '@/types/StatHistoryFormatted';
 
 /* health */
 
@@ -89,6 +90,19 @@ const getGlobalBans = async (jail: string): Promise<GlobalBan[]> => {
   return response.data;
 };
 
+/* stats */
+
+const getStatHistoryFormatted = async (
+  jail: string,
+): Promise<StatHistoryFormatted> => {
+  const response = await axios.request<StatHistoryFormatted>({
+    url: `/api/stats/history/${jail}/formatted`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
 export default {
   getHealthBack,
   getHealthBan,
@@ -98,4 +112,5 @@ export default {
   postJailsUnban,
   getFails,
   getGlobalBans,
+  getStatHistoryFormatted,
 };

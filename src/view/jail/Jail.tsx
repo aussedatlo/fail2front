@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import EditIcon from '@mui/icons-material/Edit';
@@ -37,10 +37,14 @@ const TitleContainer = styled(Box)`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
+type JailParams = {
+  jail: string;
+};
+
 export const JailView: React.FC = () => {
   const theme = useTheme();
-  const { jail } = useParams();
-  const { jails } = useContext(Fail2BanContext);
+  const { jail } = useParams<keyof JailParams>() as JailParams;
+  const { jails, stats } = useContext(Fail2BanContext);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const chartFailedRef = useResizeObserver();
@@ -48,21 +52,30 @@ export const JailView: React.FC = () => {
   const { ref, width } = useResizeObserver();
 
   const jailData = jails?.find((j) => j.name === jail);
+  const jailStat = useMemo(() => stats?.[jail] ?? {}, [stats, jail]);
 
-  const data1 = [20, 12, 14, 18, 26, 20, 22];
-  const data2 = [...data1].reverse();
+  const labels = Object.keys(jailStat);
 
-  const labels = [
-    'Page A',
-    'Page B',
-    'Page C',
-    'Page D',
-    'Page E',
-    'Page F',
-    'Page G',
-  ];
+  const generateData = useCallback(
+    (key: 'currently_banned' | 'currently_failed') => {
+      return labels.reduce((acc: number[], value: string) => {
+        acc.push(jailStat[value][key]);
+        return acc;
+      }, []);
+    },
+    [jailStat, labels],
+  );
 
-  if (!jailData || !jail) {
+  const dataCurrentlyBanned = useMemo(
+    () => generateData('currently_banned'),
+    [generateData],
+  );
+  const dataCurrentlyFailed = useMemo(
+    () => generateData('currently_failed'),
+    [generateData],
+  );
+
+  if (!jailData || !stats) {
     return null;
   }
 
@@ -134,8 +147,8 @@ export const JailView: React.FC = () => {
               <Tile isEditMode={isEditMode}>
                 <LineChartCard
                   height={chartFailedRef.height ?? 0}
-                  data={data2}
-                  labels={labels}
+                  data={dataCurrentlyFailed ?? []}
+                  labels={labels ?? []}
                   title="Failed over time"
                   color={theme.palette.primary.main}
                 />
@@ -171,8 +184,8 @@ export const JailView: React.FC = () => {
               <Tile isEditMode={isEditMode}>
                 <LineChartCard
                   height={chartBannedRef.height ?? 0}
-                  data={data1}
-                  labels={labels}
+                  data={dataCurrentlyBanned ?? []}
+                  labels={labels ?? []}
                   title="Banned over time"
                   color={theme.palette.secondary.main}
                 />

@@ -5,9 +5,9 @@ import { Ban } from '@/types/Ban';
 import { Fail } from '@/types/Fail';
 import { GlobalBan } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
+import { StatHistoryFormatted } from '@/types/StatHistoryFormatted';
 
 type Fail2BanContextProps = {
-  isLoaded: boolean;
   bans: Ban[] | undefined;
   refreshBans: () => void;
   jails: Jail[] | undefined;
@@ -15,19 +15,20 @@ type Fail2BanContextProps = {
   refreshJail: (jail: Jail) => void;
   fails: Record<string, Fail[]> | undefined;
   globalBans: Record<string, GlobalBan[]> | undefined;
+  stats: Record<string, StatHistoryFormatted> | undefined;
   healthBack: boolean;
   healthBan: boolean;
 };
 
 const initialFail2BanContext: Fail2BanContextProps = {
-  isLoaded: false,
-  bans: [],
+  bans: undefined,
   refreshBans: () => {},
-  jails: [],
+  jails: undefined,
   refreshJails: () => {},
   refreshJail: () => {},
-  fails: {},
-  globalBans: {},
+  fails: undefined,
+  globalBans: undefined,
+  stats: undefined,
   healthBack: false,
   healthBan: false,
 };
@@ -43,11 +44,11 @@ type Fail2BanContextProviderProps = {
 export const Fail2BanContextProvider: React.FC<
   Fail2BanContextProviderProps
 > = ({ children }: Fail2BanContextProviderProps) => {
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [bans, setBans] = useState<Ban[]>();
   const [jails, setJails] = useState<Jail[]>();
-  const [fails, setFails] = useState<Record<string, Fail[]>>({});
-  const [globalBans, setGlobalBans] = useState<Record<string, GlobalBan[]>>({});
+  const [fails, setFails] = useState<Record<string, Fail[]>>();
+  const [globalBans, setGlobalBans] = useState<Record<string, GlobalBan[]>>();
+  const [stats, setStats] = useState<Record<string, StatHistoryFormatted>>();
   const [healthBack, setHealthBack] = useState<boolean>(false);
   const [healthBan, setHealthBan] = useState<boolean>(false);
 
@@ -56,18 +57,37 @@ export const Fail2BanContextProvider: React.FC<
     setBans(result);
   }, []);
 
+  const refreshFails = useCallback(async (jail: Jail) => {
+    const fails = await Fail2BackService.getFails(jail.name);
+    setFails((prev) => ({ ...prev, [jail.name]: fails }));
+  }, []);
+
+  const refreshGlobalBans = useCallback(async (jail: Jail) => {
+    const globalBans = await Fail2BackService.getGlobalBans(jail.name);
+    setGlobalBans((prev) => ({ ...prev, [jail.name]: globalBans }));
+  }, []);
+
+  const refreshStats = useCallback(async (jail: Jail) => {
+    const stats = await Fail2BackService.getStatHistoryFormatted(jail.name);
+    setStats((prev) => ({ ...prev, [jail.name]: stats }));
+  }, []);
+
   const refreshJails = useCallback(async () => {
     const result = await Fail2BackService.getJails();
 
-    result.map(async (jail) => {
-      const fails = await Fail2BackService.getFails(jail.name);
-      setFails((prev) => ({ ...prev, [jail.name]: fails }));
-      const globalBans = await Fail2BackService.getGlobalBans(jail.name);
-      setGlobalBans((prev) => ({ ...prev, [jail.name]: globalBans }));
-    });
-
     setJails(result);
-  }, []);
+
+    result.forEach((jail) => {
+      refreshFails(jail);
+      refreshGlobalBans(jail);
+      refreshStats(jail);
+    });
+  }, [refreshFails, refreshGlobalBans, refreshStats]);
+
+  useEffect(() => {
+    console.log('Fail2BanContextProvider useEffect');
+    console.log(stats);
+  }, [stats]);
 
   const refreshJail = useCallback(async (jail: Jail) => {
     const fails = await Fail2BackService.getFails(jail.name);
@@ -85,9 +105,7 @@ export const Fail2BanContextProvider: React.FC<
   }, []);
 
   useEffect(() => {
-    Promise.all([refreshHealth(), refreshBans(), refreshJails()]).then(() => {
-      setIsLoaded(true);
-    });
+    Promise.all([refreshHealth(), refreshBans(), refreshJails()]);
 
     const timer = setInterval(() => {
       refreshHealth();
@@ -99,7 +117,6 @@ export const Fail2BanContextProvider: React.FC<
   return (
     <Fail2BanContext.Provider
       value={{
-        isLoaded,
         bans,
         refreshBans,
         jails,
@@ -107,6 +124,7 @@ export const Fail2BanContextProvider: React.FC<
         refreshJail,
         fails,
         globalBans,
+        stats,
         healthBack,
         healthBan,
       }}

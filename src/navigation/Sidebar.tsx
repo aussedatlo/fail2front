@@ -23,8 +23,7 @@ const StyledTab = styled(Tab)`
 
 export const Sidebar: React.FC = () => {
   const [value, setValue] = useState<string>('dashboard');
-  const { jails, isLoaded, healthBack, healthBan } =
-    useContext(Fail2BanContext);
+  const { jails, healthBack, healthBan } = useContext(Fail2BanContext);
   const navigate = useNavigate();
 
   const handleChange = (_event: SyntheticEvent, newValue: string) => {
@@ -54,8 +53,7 @@ export const Sidebar: React.FC = () => {
           disableRipple
         />
 
-        {isLoaded &&
-          jails &&
+        {jails &&
           jails.map((jail) => (
             <StyledTab
               icon={<ShieldIcon fontSize="small" />}
