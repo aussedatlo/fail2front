@@ -1,22 +1,31 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Box,
-  Button,
-  Pagination,
+  styled,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
 
-import { Fail2BanContext } from '@/context/fail2ban';
 import { IpContext } from '@/context/ip';
-import fail2backService from '@/service/fail2back.service';
+import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';
+
+const TextContainer = styled(Box)({
+  display: 'flex',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  minWidth: 0,
+  whiteSpace: 'nowrap',
+  height: 40,
+  alignItems: 'center',
+  justifyContent: 'start',
+});
 
 type IpBannedCardProps = {
   jail: Jail;
@@ -24,8 +33,17 @@ type IpBannedCardProps = {
 
 export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
   const { ipInfos, addIp, isLoaded } = useContext(IpContext);
-  const { enqueueSnackbar } = useSnackbar();
-  const { refreshJails } = useContext(Fail2BanContext);
+  const [page, setPage] = useState(0);
+  const height = useSize().height ?? 0;
+
+  // height - 180 because of the pagination / 40 because of the row height
+  const rowsPerPage = Math.ceil((height - 180) / 40);
+
+  const formattedEventsPage = useMemo(
+    () =>
+      jail.stats.ip_list.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [jail.stats.ip_list, page, rowsPerPage],
+  );
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -37,14 +55,11 @@ export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
     });
   }, [addIp, ipInfos, isLoaded, jail]);
 
-  const onUnban = async (ip: string) => {
-    const response = await fail2backService.postJailsUnban(jail.name, ip);
-    if (response) {
-      enqueueSnackbar(`Ip ${ip} Unbanned`, { variant: 'success' });
-      refreshJails();
-    } else {
-      enqueueSnackbar(`Unable to unban Ip ${ip}`, { variant: 'error' });
-    }
+  const onPageChange = (
+    _event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number,
+  ) => {
+    setPage(page);
   };
 
   return (
@@ -61,51 +76,44 @@ export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
               <TableCell>Country</TableCell>
               <TableCell>City</TableCell>
               <TableCell>Provider</TableCell>
-              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
-            {jail.stats.ip_list.map(({ ip }) => (
-              <TableRow key={ip}>
-                <TableCell>{ip}</TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex' }}>
-                    <Box sx={{ marginRight: 1 }}>
-                      {ipInfos[ip]?.flag?.emoji}
-                    </Box>
-                    {ipInfos[ip]?.country}
-                  </Box>
+            {formattedEventsPage.map(({ ip }) => (
+              <TableRow key={ip} sx={{ height: 30, fontSize: '0.5em' }}>
+                <TableCell padding={'none'}>
+                  <TextContainer width={'10em'}>{ip}</TextContainer>
                 </TableCell>
-                <TableCell>{ipInfos[ip]?.city}</TableCell>
-                <TableCell>{ipInfos[ip]?.connection?.isp}</TableCell>
-                <TableCell align="right">
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    sx={{ width: '6em' }}
-                    onClick={() => onUnban(ip)}
-                  >
-                    unban
-                  </Button>
+                <TableCell padding={'none'}>
+                  <TextContainer width={'15em'}>
+                    <span style={{ marginRight: '0.5em' }}>
+                      {ipInfos[ip]?.flag?.emoji}
+                    </span>
+                    {ipInfos[ip]?.country}
+                  </TextContainer>
+                </TableCell>
+                <TableCell padding={'none'}>
+                  <TextContainer width={'15em'}>
+                    {ipInfos[ip]?.city}
+                  </TextContainer>
+                </TableCell>
+                <TableCell padding={'none'}>
+                  <TextContainer>{ipInfos[ip]?.connection?.isp}</TextContainer>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-
-      <Box
-        sx={{
-          display: 'flex',
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'end',
-          marginTop: 2,
-        }}
-      >
-        <Pagination count={10} size="small" />
-      </Box>
+      <TablePagination
+        rowsPerPageOptions={[]}
+        component={Box}
+        count={jail.stats.ip_list.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={onPageChange}
+      />
     </>
   );
 };
