@@ -1,12 +1,9 @@
 import { useContext, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import BlockIcon from '@mui/icons-material/Block';
-import CheckIcon from '@mui/icons-material/Check';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import LanIcon from '@mui/icons-material/Lan';
 import SaveIcon from '@mui/icons-material/Save';
 import ShieldIcon from '@mui/icons-material/Shield';
-import { LoadingButton } from '@mui/lab';
 import {
   Box,
   Breadcrumbs,
@@ -15,13 +12,12 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
 import useResizeObserver from 'use-resize-observer';
 
+import { BanUnbanButton } from '@/components/BanUnbanButton';
 import { Grid } from '@/components/Grid';
 import { Tile } from '@/components/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
-import Fail2BackService from '@/service/fail2back.service';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
 const Root = styled(Box)`
@@ -46,8 +42,7 @@ type IpParams = {
 export const IpView: React.FC = () => {
   const { ip, jail } = useParams<keyof IpParams>() as IpParams;
   const navigate = useNavigate();
-  const { jails, refreshJail } = useContext(Fail2BanContext);
-  const { enqueueSnackbar } = useSnackbar();
+  const { jails } = useContext(Fail2BanContext);
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -59,28 +54,6 @@ export const IpView: React.FC = () => {
 
   const onGoBack = () => {
     navigate(-1);
-  };
-
-  const onBan = async () => {
-    setLoading(true);
-    const result = await Fail2BackService.postJailsBan(jail, ip);
-    refreshJail(jail);
-    setTimeout(() => {
-      if (result) enqueueSnackbar('IP banned', { variant: 'success' });
-      else enqueueSnackbar('Failed to ban IP', { variant: 'error' });
-      setLoading(false);
-    }, 1000);
-  };
-
-  const onUnban = async () => {
-    setLoading(true);
-    const result = await Fail2BackService.postJailsUnban(jail, ip);
-    refreshJail(jail);
-    setTimeout(() => {
-      if (result) enqueueSnackbar('IP unbanned', { variant: 'success' });
-      else enqueueSnackbar('Failed to unban IP', { variant: 'error' });
-      setLoading(false);
-    }, 1000);
   };
 
   return (
@@ -139,28 +112,12 @@ export const IpView: React.FC = () => {
           </Tooltip>
         )}
 
-        {isBanned ? (
-          <LoadingButton
-            onClick={onUnban}
-            variant="contained"
-            startIcon={<CheckIcon />}
-            loading={loading}
-            sx={{ width: '7em' }}
-          >
-            Unban
-          </LoadingButton>
-        ) : (
-          <LoadingButton
-            onClick={onBan}
-            variant="contained"
-            color="secondary"
-            startIcon={<BlockIcon />}
-            loading={loading}
-            sx={{ width: '7em' }}
-          >
-            Ban
-          </LoadingButton>
-        )}
+        <BanUnbanButton
+          ip={ip}
+          jail={jail}
+          isBanned={isBanned}
+          onLoadingChange={setLoading}
+        />
       </Box>
 
       {width && (
