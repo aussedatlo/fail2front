@@ -2,6 +2,8 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, Typography } from '@mui/material';
 
+import { CircularProgress } from '@/components/CircularProgress';
+
 type StatusContentTileProps = {
   loading: boolean;
   isBanned: boolean;
@@ -16,7 +18,18 @@ export const StatusContentTile: React.FC<StatusContentTileProps> = ({
   return (
     <>
       {loading ? (
-        <Typography>Loading...</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            marginTop: -2,
+          }}
+        >
+          <CircularProgress />
+        </Box>
       ) : isBanned ? (
         <Box
           sx={{
