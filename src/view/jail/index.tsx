@@ -18,12 +18,12 @@ import useResizeObserver from 'use-resize-observer';
 import { Grid } from '@/components/Grid';
 import { Tile } from '@/components/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
-import { BanNowCard } from '@/view/jail/BanNowCard';
-import { ConfigCard } from '@/view/jail/ConfigCard';
-import { IpBannedCard } from '@/view/jail/IpBannedCard';
-import { LastEventsCard } from '@/view/jail/LastEventsCard';
-import { LineChartCard } from '@/view/jail/LineChartCard';
-import { StatCard } from '@/view/jail/StatCard';
+import { BannedIpsContentTile } from '@/view/jail/components/BannedIpsContentTile';
+import { BanNowContentTile } from '@/view/jail/components/BanNowContentTile';
+import { ConfigContentTile } from '@/view/jail/components/ConfigContentTile';
+import { LastEventsContentTile } from '@/view/jail/components/LastEventsContentTile';
+import { LineChartContentTile } from '@/view/jail/components/LineChartContentTile';
+import { StatContentTile } from '@/view/jail/components/StatContentTile';
 
 const Root = styled(Box)`
   background-color: ${({ theme }) => theme.palette.background.paper};
@@ -135,7 +135,7 @@ export const JailView: React.FC = () => {
         <Grid width={width} type="jail" isEditMode={isEditMode}>
           <Box key="failed-total">
             <Tile isEditMode={isEditMode} title="Total failed">
-              <StatCard
+              <StatContentTile
                 value={jailData.filter.failed}
                 color={theme.palette.primary.main}
               />
@@ -144,7 +144,7 @@ export const JailView: React.FC = () => {
 
           <Box key="failed-current">
             <Tile isEditMode={isEditMode} title="Current failed">
-              <StatCard
+              <StatContentTile
                 value={jailData.filter.currently_failed}
                 color={theme.palette.primary.main}
               />
@@ -153,7 +153,7 @@ export const JailView: React.FC = () => {
 
           <Box key="failed-graph">
             <Tile isEditMode={isEditMode} title="Failed over time">
-              <LineChartCard
+              <LineChartContentTile
                 data={dataCurrentlyFailed ?? []}
                 labels={labels ?? []}
                 color={theme.palette.primary.main}
@@ -163,7 +163,7 @@ export const JailView: React.FC = () => {
 
           <Box key="banned-total">
             <Tile isEditMode={isEditMode} title="Total banned">
-              <StatCard
+              <StatContentTile
                 value={jailData.stats.banned}
                 color={theme.palette.secondary.main}
               />
@@ -172,7 +172,7 @@ export const JailView: React.FC = () => {
 
           <Box key="banned-current">
             <Tile isEditMode={isEditMode} title="Current banned">
-              <StatCard
+              <StatContentTile
                 value={jailData.stats.currently_banned}
                 color={theme.palette.secondary.main}
               />
@@ -181,7 +181,7 @@ export const JailView: React.FC = () => {
 
           <Box key="banned-graph">
             <Tile isEditMode={isEditMode} title="Banned over time">
-              <LineChartCard
+              <LineChartContentTile
                 data={dataCurrentlyBanned ?? []}
                 labels={labels ?? []}
                 color={theme.palette.secondary.main}
@@ -191,25 +191,25 @@ export const JailView: React.FC = () => {
 
           <Box key="ip-banned">
             <Tile isEditMode={isEditMode} title="Banned Ips">
-              <IpBannedCard jail={jailData} />
+              <BannedIpsContentTile jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="last-events">
             <Tile isEditMode={isEditMode} title="Last events">
-              <LastEventsCard jail={jailData} />
+              <LastEventsContentTile jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="ban-now">
             <Tile isEditMode={isEditMode} title="Ban Ip">
-              <BanNowCard jail={jailData} />
+              <BanNowContentTile jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="config">
             <Tile isEditMode={isEditMode} title="Config file list">
-              <ConfigCard jail={jailData} />
+              <ConfigContentTile jail={jailData} />
             </Tile>
           </Box>
         </Grid>

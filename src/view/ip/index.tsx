@@ -22,6 +22,7 @@ import { Grid } from '@/components/Grid';
 import { Tile } from '@/components/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import Fail2BackService from '@/service/fail2back.service';
+import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
 const Root = styled(Box)`
   background-color: ${({ theme }) => theme.palette.background.paper};
@@ -166,51 +167,11 @@ export const IpView: React.FC = () => {
         <Grid width={width} type="ip" isEditMode={isEditMode}>
           <Box key="status">
             <Tile isEditMode={isEditMode} title="Status">
-              {loading ? (
-                <Typography>Loading...</Typography>
-              ) : isBanned ? (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '100%',
-                    height: '100%',
-                    justifyContent: 'center',
-                    marginTop: -2,
-                    marginLeft: -1,
-                  }}
-                >
-                  <BlockIcon
-                    color="secondary"
-                    fontSize="large"
-                    sx={{ marginRight: 1 }}
-                  />
-                  <Typography color="text.primary" variant="h5">
-                    Banned
-                  </Typography>
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    width: '100%',
-                    height: '100%',
-                    justifyContent: 'center',
-                    marginTop: -2,
-                    marginLeft: -1,
-                  }}
-                >
-                  <CheckIcon
-                    color="primary"
-                    fontSize="large"
-                    sx={{ marginRight: 1 }}
-                  />
-                  <Typography color="text.primary" variant="h5">
-                    Not Banned
-                  </Typography>
-                </Box>
-              )}
+              <StatusContentTile
+                loading={loading}
+                isBanned={isBanned}
+                isFailed={false}
+              />
             </Tile>
           </Box>
         </Grid>

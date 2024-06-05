@@ -15,11 +15,13 @@ type JailEvent = {
   ip: string;
 };
 
-type LastEventsCardProps = {
+type LastEventsContentTileProps = {
   jail: Jail;
 };
 
-export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
+export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
+  jail,
+}) => {
   const { refreshJail, fails, globalBans } = useContext(Fail2BanContext);
   const height = useSize().height ?? 0;
 

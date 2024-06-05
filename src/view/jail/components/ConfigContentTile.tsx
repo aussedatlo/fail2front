@@ -2,11 +2,13 @@ import { Box, Typography } from '@mui/material';
 
 import { Jail } from '@/types/Jail';
 
-type ConfigCardProps = {
+type ConfigContentTileProps = {
   jail: Jail;
 };
 
-export const ConfigCard: React.FC<ConfigCardProps> = ({ jail }) => {
+export const ConfigContentTile: React.FC<ConfigContentTileProps> = ({
+  jail,
+}) => {
   return (
     <>
       {jail.filter.file_list.map((file) => (

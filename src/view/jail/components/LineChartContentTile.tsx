@@ -3,13 +3,13 @@ import { areaElementClasses, LineChart } from '@mui/x-charts';
 
 import { useSize } from '@/provider/SizeProvider';
 
-type LineChartCardProps = {
+type LineChartContentTileProps = {
   data: number[];
   labels: string[];
   color: string;
 };
 
-export const LineChartCard: React.FC<LineChartCardProps> = ({
+export const LineChartContentTile: React.FC<LineChartContentTileProps> = ({
   data,
   labels,
   color,

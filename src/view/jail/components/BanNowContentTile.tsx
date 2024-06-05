@@ -6,11 +6,13 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import fail2backService from '@/service/fail2back.service';
 import { Jail } from '@/types/Jail';
 
-type BanNowCardProps = {
+type BanNowContentTileProps = {
   jail: Jail;
 };
 
-export const BanNowCard: React.FC<BanNowCardProps> = ({ jail }) => {
+export const BanNowContentTile: React.FC<BanNowContentTileProps> = ({
+  jail,
+}) => {
   const [value, setValue] = useState<string>('');
   const { refreshJails } = useContext(Fail2BanContext);
   const { enqueueSnackbar } = useSnackbar();

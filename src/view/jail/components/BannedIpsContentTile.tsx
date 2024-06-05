@@ -6,7 +6,7 @@ import { IpContext } from '@/context/ip';
 import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';
 
-type IpBannedCardProps = {
+type BannedIpsContentTileProps = {
   jail: Jail;
 };
 
@@ -18,7 +18,9 @@ type IpData = {
   flag: string;
 };
 
-export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
+export const BannedIpsContentTile: React.FC<BannedIpsContentTileProps> = ({
+  jail,
+}) => {
   const { ipInfos, addIp, isLoaded } = useContext(IpContext);
   const height = useSize().height ?? 0;
   const navigate = useNavigate();

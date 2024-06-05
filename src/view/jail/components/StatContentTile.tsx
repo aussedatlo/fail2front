@@ -1,11 +1,14 @@
 import { Box, Typography } from '@mui/material';
 
-type StatCardProps = {
+type StatContentTileProps = {
   value: number;
   color: string;
 };
 
-export const StatCard: React.FC<StatCardProps> = ({ value, color }) => {
+export const StatContentTile: React.FC<StatContentTileProps> = ({
+  value,
+  color,
+}) => {
   return (
     <Box
       sx={{

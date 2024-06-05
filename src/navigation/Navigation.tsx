@@ -4,8 +4,8 @@ import { Box, styled } from '@mui/material';
 
 import { Sidebar } from '@/navigation/Sidebar';
 import { DashboardView } from '@/view/dashboard/Dashboard';
-import { IpView } from '@/view/ip/Ip';
-import { JailView } from '@/view/jail/Jail';
+import { IpView } from '@/view/ip';
+import { JailView } from '@/view/jail';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoutePaths {
