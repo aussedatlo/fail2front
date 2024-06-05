@@ -53,8 +53,6 @@ export const AppContextProvider: React.FC<AppContextProviderProps> = ({
     (updatedLayouts: Layouts, type: LayoutType) => {
       if (!updatedLayouts) return;
 
-      console.log(JSON.stringify(updatedLayouts));
-
       const allLayouts = { ...layouts, [type]: updatedLayouts };
       localStorage.setItem('layouts', JSON.stringify(allLayouts));
       setLayouts(allLayouts);

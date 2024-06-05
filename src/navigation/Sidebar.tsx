@@ -31,7 +31,6 @@ export const Sidebar: React.FC = () => {
   };
 
   const onJailClick = (name: string) => {
-    console.log(RoutePaths.Jail.replace(':jail', name));
     navigate(RoutePaths.Jail.replace(':jail', name));
   };
 
