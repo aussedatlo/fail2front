@@ -11,19 +11,23 @@ import {
   Typography,
 } from '@mui/material';
 
-type TableProps = {
+type TableProps<TData, TFormattedData> = {
   labels: string[];
-  data: Record<string, string | React.ReactElement>[];
+  data: TData[];
   colsWidth: string[];
   rowsPerPage: number;
+  onClick?: (item: TData) => void;
+  formatter?: (item: TData) => TFormattedData;
 };
 
-export const Table: React.FC<TableProps> = ({
+export const Table = <TData extends object, TFormattedData extends object>({
   labels,
   data,
   colsWidth,
   rowsPerPage,
-}) => {
+  onClick,
+  formatter,
+}: TableProps<TData, TFormattedData>) => {
   const [page, setPage] = useState(0);
 
   const dataForPage = useMemo(
@@ -31,11 +35,17 @@ export const Table: React.FC<TableProps> = ({
     [data, page, rowsPerPage],
   );
 
+  const formattedDataForPage = useMemo(
+    () =>
+      (formatter && dataForPage.map((item) => formatter(item))) ?? dataForPage,
+    [dataForPage, formatter],
+  );
+
   const onPageChange = (
-    _event: React.MouseEvent<HTMLButtonElement> | null,
-    page: number,
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    newPage: number,
   ) => {
-    setPage(page);
+    setPage(newPage);
   };
 
   return (
@@ -55,8 +65,13 @@ export const Table: React.FC<TableProps> = ({
           </TableHead>
 
           <TableBody>
-            {dataForPage.map((row, index) => (
-              <TableRow key={index} hover>
+            {formattedDataForPage.map((row, index) => (
+              <TableRow
+                key={index}
+                hover
+                onClick={() => onClick && onClick(dataForPage[index])}
+                sx={{ cursor: onClick ? 'pointer' : 'default' }}
+              >
                 {Object.values(row).map((value, index) => (
                   <TableCell
                     key={index}
@@ -67,11 +82,12 @@ export const Table: React.FC<TableProps> = ({
                         display: 'block',
                         width: '90%',
                         paddingRight: '1em',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      <Typography noWrap variant="body2">
-                        {value}
-                      </Typography>
+                      {value}
                     </Box>
                   </TableCell>
                 ))}

@@ -10,7 +10,7 @@ import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';
 
 type JailEvent = {
-  date: Date;
+  date: string;
   type: 'Banned' | 'Failed';
   ip: string;
 };
@@ -25,7 +25,7 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      refreshJail(jail);
+      refreshJail(jail.name);
     }, 10000);
 
     return () => {
@@ -36,7 +36,7 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
   const formattedFails: JailEvent[] = useMemo(() => {
     return (
       fails?.[jail.name]?.map((fail) => ({
-        date: new Date(fail.timeoffail * 1000),
+        date: fail.timeoffail * 1000 + '',
         type: 'Failed',
         ip: fail.ip,
       })) ?? []
@@ -46,19 +46,47 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
   const formattedBans: JailEvent[] = useMemo(() => {
     return (
       globalBans?.[jail.name]?.map((ban) => ({
-        date: new Date(ban.timeofban * 1000),
+        date: ban.timeofban * 1000 + '',
         type: 'Banned',
         ip: ban.ip,
       })) ?? []
     );
   }, [globalBans, jail.name]);
 
-  const formattedEvents = [...formattedFails, ...formattedBans].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-  );
+  const formattedEvents: JailEvent[] = [
+    ...formattedFails,
+    ...formattedBans,
+  ].sort((a, b) => Number(b.date) - Number(a.date));
 
   // height - 150 because of the pagination / 50 because of the row height
   const rowsPerPage = Math.ceil((height - 180) / 40);
+
+  const formatter = (row: JailEvent) => {
+    const { date, type, ip } = row;
+
+    return {
+      date: <ReactTimeAgo date={Number(date)} />,
+      type:
+        type === 'Banned' ? (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <BlockIcon
+              color="secondary"
+              sx={{ width: '0.8em', marginRight: 1 }}
+            />{' '}
+            Banned
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <WarningIcon
+              color="primary"
+              sx={{ width: '0.8em', marginRight: 1 }}
+            />{' '}
+            Failed
+          </Box>
+        ),
+      ip,
+    };
+  };
 
   return (
     <>
@@ -70,28 +98,8 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
         labels={['Date', 'Type', 'IP']}
         rowsPerPage={rowsPerPage}
         colsWidth={['30%', '30%', '30%']}
-        data={formattedEvents.map((event) => ({
-          date: <ReactTimeAgo date={event.date} />,
-          type:
-            event.type === 'Banned' ? (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <BlockIcon
-                  color="secondary"
-                  sx={{ width: '0.8em', marginRight: 1 }}
-                />{' '}
-                Banned
-              </Box>
-            ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <WarningIcon
-                  color="primary"
-                  sx={{ width: '0.8em', marginRight: 1 }}
-                />{' '}
-                Failed
-              </Box>
-            ),
-          ip: event.ip,
-        }))}
+        data={formattedEvents}
+        formatter={formatter}
       />
     </>
   );
