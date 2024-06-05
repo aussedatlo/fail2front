@@ -12,7 +12,7 @@ type Fail2BanContextProps = {
   refreshBans: () => void;
   jails: Jail[] | undefined;
   refreshJails: () => void;
-  refreshJail: (jail: Jail) => void;
+  refreshJail: (name: string) => void;
   fails: Record<string, Fail[]> | undefined;
   globalBans: Record<string, GlobalBan[]> | undefined;
   stats: StatsHistoryFormatted | undefined;
@@ -85,17 +85,18 @@ export const Fail2BanContextProvider: React.FC<
     });
   }, [refreshFails, refreshGlobalBans, refreshStats]);
 
-  const refreshJail = useCallback(async (jail: Jail) => {
+  const refreshJail = useCallback(async (name: string) => {
     console.log('refreshJail');
 
-    const fails = await Fail2BackService.getFailsByJail(jail.name);
-    setFails((prev) => ({ ...prev, [jail.name]: fails }));
-    const globalBans = await Fail2BackService.getGlobalBansByJail(jail.name);
-    setGlobalBans((prev) => ({ ...prev, [jail.name]: globalBans }));
-    const stats = await Fail2BackService.getStatHistoryFormattedByJail(
-      jail.name,
-    );
-    setStats((prev) => ({ ...prev, [jail.name]: stats }));
+    const jails = await Fail2BackService.getJails();
+    setJails(jails);
+
+    const fails = await Fail2BackService.getFailsByJail(name);
+    setFails((prev) => ({ ...prev, [name]: fails }));
+    const globalBans = await Fail2BackService.getGlobalBansByJail(name);
+    setGlobalBans((prev) => ({ ...prev, [name]: globalBans }));
+    const stats = await Fail2BackService.getStatHistoryFormattedByJail(name);
+    setStats((prev) => ({ ...prev, [name]: stats }));
   }, []);
 
   const refreshHealth = useCallback(async () => {

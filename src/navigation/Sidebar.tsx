@@ -26,14 +26,17 @@ export const Sidebar: React.FC = () => {
   const { jails, healthBack, healthBan } = useContext(Fail2BanContext);
   const navigate = useNavigate();
 
-  const handleChange = (_event: SyntheticEvent, newValue: string) => {
+  const onChange = (_event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
+  };
 
-    if (newValue === 'dashboard') {
-      navigate(RoutePaths.Dashboard);
-    } else {
-      navigate(RoutePaths.Jail.replace(':jail', newValue));
-    }
+  const onJailClick = (name: string) => {
+    console.log(RoutePaths.Jail.replace(':jail', name));
+    navigate(RoutePaths.Jail.replace(':jail', name));
+  };
+
+  const onDashboardClick = () => {
+    navigate(RoutePaths.Dashboard);
   };
 
   return (
@@ -43,7 +46,7 @@ export const Sidebar: React.FC = () => {
         variant="scrollable"
         aria-label="Vertical tabs example"
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
       >
         <StyledTab
           icon={<DashboardIcon fontSize="small" />}
@@ -51,6 +54,7 @@ export const Sidebar: React.FC = () => {
           label="Dashboard"
           value="dashboard"
           disableRipple
+          onClick={onDashboardClick}
         />
 
         {jails &&
@@ -62,6 +66,7 @@ export const Sidebar: React.FC = () => {
               label={jail.name}
               value={jail.name}
               disableRipple
+              onClick={() => onJailClick(jail.name)}
             />
           ))}
       </StyledTabs>

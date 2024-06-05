@@ -6,6 +6,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import ShieldIcon from '@mui/icons-material/Shield';
 import {
   Box,
+  Breadcrumbs,
   Button,
   styled,
   Tooltip,
@@ -29,12 +30,13 @@ const Root = styled(Box)`
   padding: ${({ theme }) => theme.spacing(3)};
   flex: 1;
 `;
-const TitleContainer = styled(Box)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing(5)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+
+const StyledTypography = styled(Typography)`
+  transition: color 0.15s;
+
+  &:hover {
+    color: ${({ theme }) => theme.palette.primary.main};
+  }
 `;
 
 type JailParams = {
@@ -79,9 +81,23 @@ export const JailView: React.FC = () => {
 
   return (
     <Root ref={ref}>
-      <TitleContainer>
-        <ShieldIcon fontSize="large" sx={{ marginRight: 2 }} />
-        <Typography variant="h5">{jailData.name}</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          alignItems: 'center',
+          marginBottom: 5,
+          marginTop: 1,
+        }}
+      >
+        <Breadcrumbs aria-label="breadcrumb">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <ShieldIcon sx={{ marginRight: 1 }} />
+            <StyledTypography variant="h5" color="text.primary">
+              {jail}
+            </StyledTypography>
+          </Box>
+        </Breadcrumbs>
 
         <Box sx={{ flex: 1 }} />
 
@@ -113,7 +129,7 @@ export const JailView: React.FC = () => {
             <EditIcon />
           </Button>
         </Tooltip>
-      </TitleContainer>
+      </Box>
 
       {width && (
         <Grid width={width} type="jail" isEditMode={isEditMode}>

@@ -5,36 +5,40 @@ import {
   Responsive as ResponsiveGridLayout,
 } from 'react-grid-layout';
 
+import { LayoutType } from '@/constants/layout';
 import { AppContext } from '@/context/app';
-
-type GridType = 'jail' | 'dashboard';
 
 type GridProps = {
   children: React.ReactNode;
-  type: GridType;
+  type: LayoutType;
   width: number;
   isEditMode: boolean;
 };
 
-export const Grid: React.FC<GridProps> = ({ children, width, isEditMode }) => {
+export const Grid: React.FC<GridProps> = ({
+  children,
+  width,
+  isEditMode,
+  type,
+}) => {
   const { layouts, isLoaded, setLayouts } = useContext(AppContext);
 
   const layoutEditMode: Layouts = useMemo(
     () =>
-      Object.keys(layouts).reduce((acc, key) => {
+      Object.keys(layouts[type]).reduce((acc, key) => {
         return {
           ...acc,
-          [key]: layouts[key].map((layout: Layout) => ({
+          [key]: layouts[type][key].map((layout: Layout) => ({
             ...layout,
             static: !isEditMode,
           })),
         };
       }, {}),
-    [layouts, isEditMode],
+    [layouts, type, isEditMode],
   );
 
   const onLayoutChange = (_currentLayout: Layout[], allLayouts: Layouts) => {
-    setLayouts(allLayouts);
+    setLayouts(allLayouts, type);
   };
 
   if (!isLoaded) return null;

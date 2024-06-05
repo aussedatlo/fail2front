@@ -1,3 +1,1 @@
-export type Ban = {
-  ip: string;
-};
+export type Ban = string;

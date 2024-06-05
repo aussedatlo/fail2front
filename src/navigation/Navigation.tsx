@@ -4,12 +4,14 @@ import { Box, styled } from '@mui/material';
 
 import { Sidebar } from '@/navigation/Sidebar';
 import { DashboardView } from '@/view/dashboard/Dashboard';
+import { IpView } from '@/view/ip/Ip';
 import { JailView } from '@/view/jail/Jail';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export enum RoutePaths {
   Dashboard = '/',
   Jail = '/jail/:jail',
+  JailIp = '/jail/:jail/:ip',
 }
 
 export type RouteType = { path: RoutePaths; component: React.ReactElement };
@@ -17,6 +19,7 @@ export type RouteType = { path: RoutePaths; component: React.ReactElement };
 const routes: RouteType[] = [
   { path: RoutePaths.Dashboard, component: <DashboardView /> },
   { path: RoutePaths.Jail, component: <JailView /> },
+  { path: RoutePaths.JailIp, component: <IpView /> },
 ];
 
 const Root = styled(Box)`
