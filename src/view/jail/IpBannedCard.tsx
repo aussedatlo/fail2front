@@ -1,6 +1,5 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Typography } from '@mui/material';
 
 import { Table } from '@/components/Table';
 import { IpContext } from '@/context/ip';
@@ -71,19 +70,13 @@ export const IpBannedCard: React.FC<IpBannedCardProps> = ({ jail }) => {
   };
 
   return (
-    <>
-      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Banned Ips
-      </Typography>
-
-      <Table
-        labels={['Ip', 'Country', 'City', 'Provider']}
-        rowsPerPage={rowsPerPage}
-        colsWidth={['20%', '20%', '20%', '40%']}
-        formatter={formatter}
-        data={data}
-        onClick={onClick}
-      />
-    </>
+    <Table
+      labels={['Ip', 'Country', 'City', 'Provider']}
+      rowsPerPage={rowsPerPage}
+      colsWidth={['20%', '20%', '20%', '40%']}
+      formatter={formatter}
+      data={data}
+      onClick={onClick}
+    />
   );
 };

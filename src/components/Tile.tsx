@@ -1,15 +1,23 @@
 import React from 'react';
-import { BoxProps, Card, CardContent, useTheme } from '@mui/material';
+import {
+  BoxProps,
+  Card,
+  CardContent,
+  Typography,
+  useTheme,
+} from '@mui/material';
 
 import { SizeProvider } from '@/provider/SizeProvider';
 
 type TileProps = {
   isEditMode: boolean;
+  title: string;
 } & BoxProps;
 
 export const Tile: React.FC<TileProps> = ({
   children,
   isEditMode,
+  title,
   ...props
 }) => {
   const theme = useTheme();
@@ -29,7 +37,13 @@ export const Tile: React.FC<TileProps> = ({
           color: theme.palette.primary.main,
         }}
       >
-        <CardContent sx={{ flexGrow: 1 }}>{children}</CardContent>
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            {title}
+          </Typography>
+
+          {children}
+        </CardContent>
       </Card>
     </SizeProvider>
   );

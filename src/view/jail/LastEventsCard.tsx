@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { Table } from '@/components/Table';
 import { Fail2BanContext } from '@/context/fail2ban';
@@ -89,18 +89,12 @@ export const LastEventsCard: React.FC<LastEventsCardProps> = ({ jail }) => {
   };
 
   return (
-    <>
-      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Last events
-      </Typography>
-
-      <Table
-        labels={['Date', 'Type', 'IP']}
-        rowsPerPage={rowsPerPage}
-        colsWidth={['30%', '30%', '30%']}
-        data={formattedEvents}
-        formatter={formatter}
-      />
-    </>
+    <Table
+      labels={['Date', 'Type', 'IP']}
+      rowsPerPage={rowsPerPage}
+      colsWidth={['30%', '30%', '30%']}
+      data={formattedEvents}
+      formatter={formatter}
+    />
   );
 };

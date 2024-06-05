@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Box, Button, TextField, Typography } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
 import { Fail2BanContext } from '@/context/fail2ban';
@@ -30,34 +30,28 @@ export const BanNowCard: React.FC<BanNowCardProps> = ({ jail }) => {
   };
 
   return (
-    <>
-      <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        Ban now
-      </Typography>
+    <Box
+      sx={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <TextField
+        hiddenLabel
+        id="filled-hidden-label-small"
+        variant="filled"
+        size="small"
+        onChange={onChange}
+        placeholder="Ip Address"
+        value={value}
+        fullWidth
+        sx={{ marginRight: 2 }}
+      />
 
-      <Box
-        sx={{
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <TextField
-          hiddenLabel
-          id="filled-hidden-label-small"
-          variant="filled"
-          size="small"
-          onChange={onChange}
-          placeholder="Ip Address"
-          value={value}
-          fullWidth
-          sx={{ marginRight: 2 }}
-        />
-
-        <Button variant="outlined" color="secondary" onClick={onBan}>
-          Ban
-        </Button>
-      </Box>
-    </>
+      <Button variant="outlined" color="secondary" onClick={onBan}>
+        Ban
+      </Button>
+    </Box>
   );
 };

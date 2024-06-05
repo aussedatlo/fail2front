@@ -165,14 +165,7 @@ export const IpView: React.FC = () => {
       {width && (
         <Grid width={width} type="ip" isEditMode={isEditMode}>
           <Box key="status">
-            <Tile isEditMode={isEditMode}>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
-              >
-                Status
-              </Typography>
+            <Tile isEditMode={isEditMode} title="Status">
               {loading ? (
                 <Typography>Loading...</Typography>
               ) : isBanned ? (

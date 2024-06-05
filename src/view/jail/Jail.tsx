@@ -134,87 +134,81 @@ export const JailView: React.FC = () => {
       {width && (
         <Grid width={width} type="jail" isEditMode={isEditMode}>
           <Box key="failed-total">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Total failed">
               <StatCard
                 value={jailData.filter.failed}
-                title="Total failed"
                 color={theme.palette.primary.main}
               />
             </Tile>
           </Box>
 
           <Box key="failed-current">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Current failed">
               <StatCard
                 value={jailData.filter.currently_failed}
-                title="Current failed"
                 color={theme.palette.primary.main}
               />
             </Tile>
           </Box>
 
           <Box key="failed-graph">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Failed over time">
               <LineChartCard
                 data={dataCurrentlyFailed ?? []}
                 labels={labels ?? []}
-                title="Failed over time"
                 color={theme.palette.primary.main}
               />
             </Tile>
           </Box>
 
           <Box key="banned-total">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Total banned">
               <StatCard
                 value={jailData.stats.banned}
-                title="Total banned"
                 color={theme.palette.secondary.main}
               />
             </Tile>
           </Box>
 
           <Box key="banned-current">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Current banned">
               <StatCard
                 value={jailData.stats.currently_banned}
-                title="Current banned"
                 color={theme.palette.secondary.main}
               />
             </Tile>
           </Box>
 
           <Box key="banned-graph">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Banned over time">
               <LineChartCard
                 data={dataCurrentlyBanned ?? []}
                 labels={labels ?? []}
-                title="Banned over time"
                 color={theme.palette.secondary.main}
               />
             </Tile>
           </Box>
 
           <Box key="ip-banned">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Banned Ips">
               <IpBannedCard jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="last-events">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Last events">
               <LastEventsCard jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="ban-now">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Ban Ip">
               <BanNowCard jail={jailData} />
             </Tile>
           </Box>
 
           <Box key="config">
-            <Tile isEditMode={isEditMode}>
+            <Tile isEditMode={isEditMode} title="Config file list">
               <ConfigCard jail={jailData} />
             </Tile>
           </Box>
