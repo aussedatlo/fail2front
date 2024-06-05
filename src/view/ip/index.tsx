@@ -17,6 +17,7 @@ import useResizeObserver from 'use-resize-observer';
 import { BanUnbanButton } from '@/components/BanUnbanButton';
 import { Grid } from '@/components/Grid';
 import { Tile } from '@/components/Tile';
+import { UpdateIpButton } from '@/components/UpdateIpButton';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
@@ -103,7 +104,7 @@ export const IpView: React.FC = () => {
           <Tooltip title="Save layout" arrow>
             <Button
               onClick={() => setIsEditMode(false)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
               color="secondary"
             >
@@ -116,8 +117,11 @@ export const IpView: React.FC = () => {
           ip={ip}
           jail={jail}
           isBanned={isBanned}
-          onLoadingChange={setLoading}
+          onClick={() => setLoading(true)}
+          onComplete={() => setLoading(false)}
         />
+
+        <UpdateIpButton ip={ip} onComplete={() => {}} />
       </Box>
 
       {width && (

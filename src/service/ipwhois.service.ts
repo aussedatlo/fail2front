@@ -4,8 +4,8 @@ import { IpInfos } from '@/types/IpInfos';
 
 const cache: Record<string, IpInfos> = {};
 
-const getIpInfos = async (ip: string) => {
-  if (cache[ip]) {
+const getIpInfos = async (ip: string, useCache: boolean = true) => {
+  if (useCache && cache[ip]) {
     return cache[ip];
   }
 

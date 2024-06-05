@@ -6,7 +6,7 @@ import { IpInfos } from '@/types/IpInfos';
 type IpContextProps = {
   isLoaded: boolean;
   ipInfos: Record<string, IpInfos>;
-  addIp: (ip: string) => void;
+  addIp: (ip: string, useCache?: boolean) => void;
 };
 
 const initialIpContext: IpContextProps = {
@@ -27,8 +27,8 @@ export const IpContextProvider: React.FC<IpContextProviderProps> = ({
   const [ipInfos, setIpInfos] = useState<Record<string, IpInfos>>({});
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
-  const addIp = useCallback(async (ip: string) => {
-    const response = await IpService.getIpInfos(ip);
+  const addIp = useCallback(async (ip: string, useCache: boolean = true) => {
+    const response = await IpService.getIpInfos(ip, useCache);
     setIpInfos((prev) => ({ ...prev, [ip]: response }));
   }, []);
 
