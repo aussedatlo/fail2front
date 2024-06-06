@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import LanIcon from '@mui/icons-material/Lan';
@@ -18,6 +18,7 @@ import { BanUnbanButton } from '@/components/buttons/BanUnbanButton';
 import { UpdateIpButton } from '@/components/buttons/UpdateIpButton';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
+import { StatContentTile } from '@/components/StatContentTile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
@@ -43,7 +44,7 @@ type IpParams = {
 export const IpView: React.FC = () => {
   const { ip, jail } = useParams<keyof IpParams>() as IpParams;
   const navigate = useNavigate();
-  const { jails } = useContext(Fail2BanContext);
+  const { jails, globalBans, fails } = useContext(Fail2BanContext);
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -52,6 +53,17 @@ export const IpView: React.FC = () => {
   const jailData = jails?.find((j) => j.name === jail);
   const isBanned =
     jailData?.stats.ip_list.findIndex((jailIp) => jailIp.ip === ip) !== -1;
+
+  const globalBansFiltered = useMemo(() => {
+    return globalBans?.[jail]?.filter((ban) => ban.ip === ip) ?? [];
+  }, [globalBans, jail, ip]);
+
+  const failsFiltered = useMemo(() => {
+    return fails?.[jail]?.filter((fail) => fail.ip === ip) ?? [];
+  }, [fails, jail, ip]);
+
+  console.log(fails);
+  console.log(failsFiltered);
 
   const onGoBack = () => {
     navigate(-1);
@@ -133,6 +145,21 @@ export const IpView: React.FC = () => {
                 isBanned={isBanned}
                 isFailed={false}
               />
+            </Tile>
+          </Box>
+
+          <Box key="banned-total">
+            <Tile isEditMode={isEditMode} title="Total banned">
+              <StatContentTile
+                value={globalBansFiltered.length}
+                color="secondary"
+              />
+            </Tile>
+          </Box>
+
+          <Box key="failed-total">
+            <Tile isEditMode={isEditMode} title="Total failed">
+              <StatContentTile value={failsFiltered.length} color="primary" />
             </Tile>
           </Box>
         </Grid>
