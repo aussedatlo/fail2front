@@ -10,7 +10,7 @@ export const StyledLoadingButton = styled(MuiLoadingButton)`
   width: 7em;
 `;
 
-type LoadingButtonProps<T> = {
+export type LoadingButtonProps<T> = {
   /**
    * Event handler for the button click.
    *
