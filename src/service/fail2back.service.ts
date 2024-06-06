@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import { Ban } from '@/types/Ban';
-import { Fail, Fails } from '@/types/Fail';
-import { GlobalBan, GlobalBans } from '@/types/GlobalBan';
+import { Fail, FailsRecord } from '@/types/Fail';
+import { GlobalBan, GlobalBansRecord } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
 import {
   StatsHistory,
@@ -73,8 +73,8 @@ const postJailsUnban = async (jail: string, ip: string): Promise<boolean> => {
 
 /* fails */
 
-const getFails = async (): Promise<Fails> => {
-  const response = await axios.request<Fails>({
+const getFails = async (): Promise<FailsRecord> => {
+  const response = await axios.request<FailsRecord>({
     url: `/api/fails`,
     method: 'GET',
     params: { group_by: 'jail' },
@@ -94,8 +94,8 @@ const getFailsByJail = async (jail: string): Promise<Fail[]> => {
 
 /* globalbans */
 
-const getGlobalBans = async (): Promise<GlobalBans> => {
-  const response = await axios.request<GlobalBans>({
+const getGlobalBans = async (): Promise<GlobalBansRecord> => {
+  const response = await axios.request<GlobalBansRecord>({
     url: `/api/globalbans`,
     method: 'GET',
     params: { group_by: 'jail' },
