@@ -45,7 +45,6 @@ export const IpView: React.FC = () => {
   const { ip, jail } = useParams<keyof IpParams>() as IpParams;
   const navigate = useNavigate();
   const { jails, globalBans, fails } = useContext(Fail2BanContext);
-  const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const { ref, width } = useResizeObserver();
@@ -125,26 +124,16 @@ export const IpView: React.FC = () => {
           </Tooltip>
         )}
 
-        <BanUnbanButton
-          ip={ip}
-          jail={jail}
-          isBanned={isBanned}
-          onClick={() => setLoading(true)}
-          onComplete={() => setLoading(false)}
-        />
+        <BanUnbanButton ip={ip} jail={jail} isBanned={isBanned} />
 
-        <UpdateIpButton ip={ip} onComplete={() => {}} />
+        <UpdateIpButton ip={ip} />
       </Box>
 
       {width && (
         <Grid width={width} type="ip" isEditMode={isEditMode}>
           <Box key="status">
             <Tile isEditMode={isEditMode} title="Status">
-              <StatusContentTile
-                loading={loading}
-                isBanned={isBanned}
-                isFailed={false}
-              />
+              <StatusContentTile isBanned={isBanned} isFailed={false} />
             </Tile>
           </Box>
 

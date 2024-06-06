@@ -5,14 +5,10 @@ import { LoadingButton } from '@/components/buttons/LoadingButton';
 import { IpContext } from '@/context/ip';
 
 type UpdateIpButtonProps = {
-  onComplete: () => void;
   ip: string;
 };
 
-export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({
-  onComplete,
-  ip,
-}) => {
+export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({ ip }) => {
   const { addIp } = useContext(IpContext);
 
   const onUpdateIp = async (): Promise<void> => {
@@ -23,7 +19,6 @@ export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({
   return (
     <LoadingButton
       onClick={onUpdateIp}
-      onComplete={onComplete}
       variant="contained"
       color="primary"
       startIcon={<ReplayIcon />}

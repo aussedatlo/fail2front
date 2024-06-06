@@ -8,16 +8,12 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import Fail2BackService from '@/service/fail2back.service';
 
 type BanUnbanButtonProps = {
-  onComplete: () => void;
-  onClick: () => void;
   jail: string;
   ip: string;
   isBanned: boolean;
 };
 
 export const BanUnbanButton: React.FC<BanUnbanButtonProps> = ({
-  onClick,
-  onComplete,
   jail,
   ip,
   isBanned,
@@ -26,35 +22,31 @@ export const BanUnbanButton: React.FC<BanUnbanButtonProps> = ({
   const { enqueueSnackbar } = useSnackbar();
 
   const onBan = async (): Promise<boolean> => {
-    onClick();
     const result = await Fail2BackService.postJailsBan(jail, ip);
-    refreshJail(jail);
     return result;
   };
 
-  const onBanDone = (result: boolean) => {
+  const onBanComplete = (result: boolean) => {
+    refreshJail(jail);
     if (result) enqueueSnackbar('IP banned', { variant: 'success' });
     else enqueueSnackbar('Failed to ban IP', { variant: 'error' });
-    onComplete();
   };
 
   const onUnban = async (): Promise<boolean> => {
-    onClick();
     const result = await Fail2BackService.postJailsUnban(jail, ip);
-    refreshJail(jail);
     return result;
   };
 
-  const onUnbanDone = (result: boolean) => {
+  const onUnbanComplete = (result: boolean) => {
+    refreshJail(jail);
     if (result) enqueueSnackbar('IP unbanned', { variant: 'success' });
     else enqueueSnackbar('Failed to unban IP', { variant: 'error' });
-    onComplete();
   };
 
   const Button = isBanned ? (
     <LoadingButton
       onClick={onUnban}
-      onComplete={onUnbanDone}
+      onComplete={onUnbanComplete}
       variant="contained"
       color="primary"
       startIcon={<CheckIcon />}
@@ -64,7 +56,7 @@ export const BanUnbanButton: React.FC<BanUnbanButtonProps> = ({
   ) : (
     <LoadingButton
       onClick={onBan}
-      onComplete={onBanDone}
+      onComplete={onBanComplete}
       variant="contained"
       color="secondary"
       startIcon={<BlockIcon />}
