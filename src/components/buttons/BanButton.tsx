@@ -2,16 +2,23 @@ import { useContext } from 'react';
 import BlockIcon from '@mui/icons-material/Block';
 import { useSnackbar } from 'notistack';
 
-import { LoadingButton } from '@/components/buttons/LoadingButton';
+import {
+  LoadingButton,
+  LoadingButtonProps,
+} from '@/components/buttons/LoadingButton';
 import { Fail2BanContext } from '@/context/fail2ban';
 import Fail2BackService from '@/service/fail2back.service';
 
 type BanButtonProps = {
   jail: string;
   ip: string;
-};
+} & Omit<LoadingButtonProps<boolean>, 'onClick'>;
 
-export const BanButton: React.FC<BanButtonProps> = ({ jail, ip }) => {
+export const BanButton: React.FC<BanButtonProps> = ({
+  jail,
+  ip,
+  onComplete,
+}) => {
   const { refreshJail } = useContext(Fail2BanContext);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -20,10 +27,14 @@ export const BanButton: React.FC<BanButtonProps> = ({ jail, ip }) => {
     return result;
   };
 
-  const onBanComplete = (result: boolean) => {
+  const onBanComplete = (
+    result: boolean,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
     refreshJail(jail);
     if (result) enqueueSnackbar('IP banned', { variant: 'success' });
     else enqueueSnackbar('Failed to ban IP', { variant: 'error' });
+    onComplete && onComplete(result, setLoading);
   };
 
   return (
