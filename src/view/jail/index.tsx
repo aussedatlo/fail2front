@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import useResizeObserver from 'use-resize-observer';
 
-import { Grid } from '@/components/Grid';
-import { Tile } from '@/components/Tile';
+import { Grid } from '@/components/layouts/Grid';
+import { Tile } from '@/components/layouts/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { BannedIpsContentTile } from '@/view/jail/components/BannedIpsContentTile';
 import { BanNowContentTile } from '@/view/jail/components/BanNowContentTile';

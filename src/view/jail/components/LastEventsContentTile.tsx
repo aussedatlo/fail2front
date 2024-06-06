@@ -4,7 +4,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
 import { Box } from '@mui/material';
 
-import { Table } from '@/components/Table';
+import { Table } from '@/components/layouts/Table';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';

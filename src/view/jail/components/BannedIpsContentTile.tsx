@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Table } from '@/components/Table';
+import { Table } from '@/components/layouts/Table';
 import { IpContext } from '@/context/ip';
 import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';

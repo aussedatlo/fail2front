@@ -14,10 +14,10 @@ import {
 } from '@mui/material';
 import useResizeObserver from 'use-resize-observer';
 
-import { BanUnbanButton } from '@/components/BanUnbanButton';
-import { Grid } from '@/components/Grid';
-import { Tile } from '@/components/Tile';
-import { UpdateIpButton } from '@/components/UpdateIpButton';
+import { BanUnbanButton } from '@/components/buttons/BanUnbanButton';
+import { UpdateIpButton } from '@/components/buttons/UpdateIpButton';
+import { Grid } from '@/components/layouts/Grid';
+import { Tile } from '@/components/layouts/Tile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 

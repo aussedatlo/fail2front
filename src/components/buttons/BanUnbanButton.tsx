@@ -3,7 +3,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import CheckIcon from '@mui/icons-material/Check';
 import { useSnackbar } from 'notistack';
 
-import { LoadingButton } from '@/components/LoadingButton';
+import { LoadingButton } from '@/components/buttons/LoadingButton';
 import { Fail2BanContext } from '@/context/fail2ban';
 import Fail2BackService from '@/service/fail2back.service';
 

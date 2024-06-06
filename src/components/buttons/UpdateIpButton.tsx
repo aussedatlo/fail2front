@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import ReplayIcon from '@mui/icons-material/Replay';
 
-import { LoadingButton } from '@/components/LoadingButton';
+import { LoadingButton } from '@/components/buttons/LoadingButton';
 import { IpContext } from '@/context/ip';
 
 type UpdateIpButtonProps = {
