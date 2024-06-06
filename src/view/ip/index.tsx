@@ -14,7 +14,8 @@ import {
 } from '@mui/material';
 import useResizeObserver from 'use-resize-observer';
 
-import { BanUnbanButton } from '@/components/buttons/BanUnbanButton';
+import { BanButton } from '@/components/buttons/BanButton';
+import { UnbanButton } from '@/components/buttons/UnbanButton';
 import { UpdateIpButton } from '@/components/buttons/UpdateIpButton';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
@@ -124,7 +125,11 @@ export const IpView: React.FC = () => {
           </Tooltip>
         )}
 
-        <BanUnbanButton ip={ip} jail={jail} isBanned={isBanned} />
+        {isBanned ? (
+          <UnbanButton ip={ip} jail={jail} />
+        ) : (
+          <BanButton ip={ip} jail={jail} />
+        )}
 
         <UpdateIpButton ip={ip} />
       </Box>

@@ -5,4 +5,4 @@ export type Fail = {
   match: string;
 };
 
-export type Fails = Record<string, Fail[]>;
+export type FailsRecord = Record<string, Fail[]>;

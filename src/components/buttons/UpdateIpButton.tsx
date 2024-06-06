@@ -16,9 +16,18 @@ export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({ ip }) => {
     addIp(ip, false);
   };
 
+  const onUpdateIpComplete = (
+    _result: void,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => {
+    console.log('onUpdateIpComplete');
+    setLoading(false);
+  };
+
   return (
     <LoadingButton
       onClick={onUpdateIp}
+      onComplete={onUpdateIpComplete}
       variant="contained"
       color="primary"
       startIcon={<ReplayIcon />}

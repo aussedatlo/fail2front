@@ -8,4 +8,4 @@ export type GlobalBan = {
   };
 };
 
-export type GlobalBans = Record<string, GlobalBan[]>;
+export type GlobalBansRecord = Record<string, GlobalBan[]>;

@@ -25,7 +25,10 @@ type LoadingButtonProps<T> = {
    *
    * @param arg - The result of the click handler.
    */
-  onComplete?: (arg: T) => void;
+  onComplete?: (
+    arg: T,
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  ) => void;
 } & Omit<MuiLoadingButtonProps, 'onClick' | 'loading'>;
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
@@ -46,8 +49,7 @@ export const LoadingButton = <T extends unknown>({
 
     // add a delay to simulate a network request
     setTimeout(() => {
-      setLoading(false);
-      onComplete && onComplete(result);
+      onComplete && onComplete(result, setLoading);
     }, 1000);
   };
 
