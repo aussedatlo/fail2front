@@ -1,0 +1,24 @@
+name: Install Check CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  dependencies-integrity:
+    name: Run lock file check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - run: yarn install
+      - name: Check no changes
+        run: git diff --quiet ./yarn.lock || exit 1
