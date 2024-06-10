@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
@@ -41,6 +42,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
 }) => {
   const { refreshJail, fails, globalBans } = useContext(Fail2BanContext);
   const height = useSize().height ?? 0;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -136,6 +138,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
       colsWidth={['150px', '130px', '150px']}
       data={formattedEvents}
       formatter={formatter}
+      onClick={(row) => navigate(`/jail/${jail}/${row.ip}`)}
     />
   );
 };
