@@ -14,7 +14,6 @@ import {
 import { Table } from '@/components/layouts/Table';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { useSize } from '@/provider/SizeProvider';
-import { Jail } from '@/types/Jail';
 
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -32,18 +31,20 @@ type JailEvent = {
 };
 
 type LastEventsContentTileProps = {
-  jail: Jail;
+  jail: string;
+  ip?: string;
 };
 
 export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   jail,
+  ip,
 }) => {
   const { refreshJail, fails, globalBans } = useContext(Fail2BanContext);
   const height = useSize().height ?? 0;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      refreshJail(jail.name);
+      refreshJail(jail);
     }, 10000);
 
     return () => {
@@ -53,42 +54,41 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
 
   const formattedFails: JailEvent[] = useMemo(() => {
     return (
-      fails?.[jail.name]?.map((fail) => ({
+      fails?.[jail]?.map((fail) => ({
         date: fail.timeoffail * 1000,
         type: 'Failed',
         ip: fail.ip,
         match: fail.match,
       })) ?? []
     );
-  }, [fails, jail.name]);
+  }, [fails, jail]);
 
   const formattedBans: JailEvent[] = useMemo(() => {
     return (
-      globalBans?.[jail.name]?.map((ban) => ({
+      globalBans?.[jail]?.map((ban) => ({
         date: ban.timeofban * 1000,
         type: 'Banned',
         ip: ban.ip,
         match: ban.data.matches.at(-1) ?? 'Manual ban',
       })) ?? []
     );
-  }, [globalBans, jail.name]);
+  }, [globalBans, jail]);
 
-  const formattedEvents: JailEvent[] = [
-    ...formattedFails,
-    ...formattedBans,
-  ].sort((a, b) => {
-    if (a.date !== b.date) {
-      return b.date - a.date;
-    } else {
-      if (a.type === 'Failed' && b.type === 'Banned') {
-        return 1;
-      } else if (a.type === 'Banned' && b.type === 'Failed') {
-        return -1;
+  const formattedEvents: JailEvent[] = [...formattedFails, ...formattedBans]
+    .filter((event) => (ip ? event.ip === ip : true))
+    .sort((a, b) => {
+      if (a.date !== b.date) {
+        return b.date - a.date;
       } else {
-        return 0;
+        if (a.type === 'Failed' && b.type === 'Banned') {
+          return 1;
+        } else if (a.type === 'Banned' && b.type === 'Failed') {
+          return -1;
+        } else {
+          return 0;
+        }
       }
-    }
-  });
+    });
 
   console.log(formattedEvents);
 

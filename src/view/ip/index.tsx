@@ -17,6 +17,7 @@ import useResizeObserver from 'use-resize-observer';
 import { BanButton } from '@/components/buttons/BanButton';
 import { UnbanButton } from '@/components/buttons/UnbanButton';
 import { UpdateIpButton } from '@/components/buttons/UpdateIpButton';
+import { LastEventsContentTile } from '@/components/LastEventsContentTile';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
 import { StatContentTile } from '@/components/StatContentTile';
@@ -154,6 +155,12 @@ export const IpView: React.FC = () => {
           <Box key="failed-total">
             <Tile isEditMode={isEditMode} title="Total failed">
               <StatContentTile value={failsFiltered.length} color="primary" />
+            </Tile>
+          </Box>
+
+          <Box key="last-events">
+            <Tile isEditMode={isEditMode} title="Total failed">
+              <LastEventsContentTile jail={jail} ip={ip} />
             </Tile>
           </Box>
         </Grid>
