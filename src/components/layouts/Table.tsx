@@ -14,7 +14,7 @@ import {
 type TableProps<TData, TFormattedData> = {
   labels: string[];
   data: TData[];
-  colsWidth: string[];
+  colsWidth?: string[];
   rowsPerPage: number;
   onClick?: (item: TData) => void;
   formatter?: (item: TData) => TFormattedData;
@@ -50,12 +50,15 @@ export const Table = <TData extends object, TFormattedData extends object>({
 
   return (
     <>
-      <TableContainer component={Box} sx={{ marginTop: 2 }}>
-        <MuiTable size="small">
+      <TableContainer component={Box} sx={{ marginTop: 2, overflow: 'hidden' }}>
+        <MuiTable size="small" sx={{ tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow>
               {labels.map((key, index) => (
-                <TableCell key={index} sx={{ width: colsWidth[index] }}>
+                <TableCell
+                  key={index}
+                  sx={{ width: colsWidth?.[index] ?? 'auto' }}
+                >
                   <Typography sx={{ textTransform: 'capitalize' }}>
                     {key}
                   </Typography>
@@ -70,25 +73,19 @@ export const Table = <TData extends object, TFormattedData extends object>({
                 key={index}
                 hover
                 onClick={() => onClick && onClick(dataForPage[index])}
-                sx={{ cursor: onClick ? 'pointer' : 'default' }}
+                sx={{
+                  cursor: onClick ? 'pointer' : 'default',
+                }}
               >
                 {Object.values(row).map((value, index) => (
                   <TableCell
                     key={index}
-                    sx={{ width: colsWidth[index], height: 40 }}
+                    sx={{
+                      height: 40,
+                      width: colsWidth?.[index] ?? 'auto',
+                    }}
                   >
-                    <Box
-                      sx={{
-                        display: 'block',
-                        width: '90%',
-                        paddingRight: '1em',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {value}
-                    </Box>
+                    {value}
                   </TableCell>
                 ))}
               </TableRow>

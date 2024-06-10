@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import useResizeObserver from 'use-resize-observer';
 
+import { LastEventsContentTile } from '@/components/LastEventsContentTile';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
 import { StatContentTile } from '@/components/StatContentTile';
@@ -22,7 +23,6 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import { BannedIpsContentTile } from '@/view/jail/components/BannedIpsContentTile';
 import { BanNowContentTile } from '@/view/jail/components/BanNowContentTile';
 import { ConfigContentTile } from '@/view/jail/components/ConfigContentTile';
-import { LastEventsContentTile } from '@/view/jail/components/LastEventsContentTile';
 import { LineChartContentTile } from '@/view/jail/components/LineChartContentTile';
 
 const Root = styled(Box)`
@@ -197,7 +197,7 @@ export const JailView: React.FC = () => {
 
           <Box key="last-events">
             <Tile isEditMode={isEditMode} title="Last events">
-              <LastEventsContentTile jail={jailData} />
+              <LastEventsContentTile jail={jailData.name} />
             </Tile>
           </Box>
 
