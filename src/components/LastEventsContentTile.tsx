@@ -135,7 +135,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
     <Table
       labels={['Date', 'Type', 'IP', 'Match']}
       rowsPerPage={rowsPerPage}
-      colsWidth={['150px', '130px', '150px']}
+      colsWidth={['155px', '130px', '165px']}
       data={formattedEvents}
       formatter={formatter}
       onClick={(row) => navigate(`/jail/${jail}/${row.ip}`)}
