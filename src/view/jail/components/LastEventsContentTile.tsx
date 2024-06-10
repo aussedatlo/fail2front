@@ -2,17 +2,33 @@ import { useContext, useEffect, useMemo } from 'react';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
 import WarningIcon from '@mui/icons-material/Warning';
-import { Box } from '@mui/material';
+import {
+  Box,
+  styled,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+  Typography,
+} from '@mui/material';
 
 import { Table } from '@/components/layouts/Table';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { useSize } from '@/provider/SizeProvider';
 import { Jail } from '@/types/Jail';
 
+const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: '100em',
+  },
+});
+
 type JailEvent = {
   date: string;
   type: 'Banned' | 'Failed';
   ip: string;
+  match: string;
 };
 
 type LastEventsContentTileProps = {
@@ -41,6 +57,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
         date: fail.timeoffail * 1000 + '',
         type: 'Failed',
         ip: fail.ip,
+        match: fail.match,
       })) ?? []
     );
   }, [fails, jail.name]);
@@ -51,6 +68,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
         date: ban.timeofban * 1000 + '',
         type: 'Banned',
         ip: ban.ip,
+        match: ban.data.matches.at(-1) ?? 'Manual ban',
       })) ?? []
     );
   }, [globalBans, jail.name]);
@@ -64,7 +82,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   const rowsPerPage = Math.ceil((height - 180) / 40);
 
   const formatter = (row: JailEvent) => {
-    const { date, type, ip } = row;
+    const { date, type, ip, match } = row;
 
     return {
       date: <ReactTimeAgo date={Number(date)} />,
@@ -87,14 +105,21 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
           </Box>
         ),
       ip,
+      match: (
+        <CustomWidthTooltip title={match} arrow placement="bottom-start">
+          <Typography noWrap variant="body2">
+            {match}
+          </Typography>
+        </CustomWidthTooltip>
+      ),
     };
   };
 
   return (
     <Table
-      labels={['Date', 'Type', 'IP']}
+      labels={['Date', 'Type', 'IP', 'Match']}
       rowsPerPage={rowsPerPage}
-      colsWidth={['30%', '30%', '30%']}
+      colsWidth={['150px', '130px', '150px']}
       data={formattedEvents}
       formatter={formatter}
     />

@@ -28,7 +28,7 @@ export const Tile: React.FC<TileProps> = ({
         sx={{
           display: 'flex',
           height: '100%',
-          flex: 1,
+          width: '100%',
           userSelect: isEditMode ? 'none' : 'auto',
           cursor: isEditMode ? 'grab' : 'auto',
           outline: isEditMode
@@ -37,7 +37,7 @@ export const Tile: React.FC<TileProps> = ({
           color: theme.palette.primary.main,
         }}
       >
-        <CardContent sx={{ flexGrow: 1 }}>
+        <CardContent sx={{ width: '100%' }}>
           <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
             {title}
           </Typography>
