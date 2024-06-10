@@ -25,7 +25,7 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
 });
 
 type JailEvent = {
-  date: string;
+  date: number;
   type: 'Banned' | 'Failed';
   ip: string;
   match: string;
@@ -54,7 +54,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   const formattedFails: JailEvent[] = useMemo(() => {
     return (
       fails?.[jail.name]?.map((fail) => ({
-        date: fail.timeoffail * 1000 + '',
+        date: fail.timeoffail * 1000,
         type: 'Failed',
         ip: fail.ip,
         match: fail.match,
@@ -65,7 +65,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   const formattedBans: JailEvent[] = useMemo(() => {
     return (
       globalBans?.[jail.name]?.map((ban) => ({
-        date: ban.timeofban * 1000 + '',
+        date: ban.timeofban * 1000,
         type: 'Banned',
         ip: ban.ip,
         match: ban.data.matches.at(-1) ?? 'Manual ban',
@@ -76,7 +76,21 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   const formattedEvents: JailEvent[] = [
     ...formattedFails,
     ...formattedBans,
-  ].sort((a, b) => Number(b.date) - Number(a.date));
+  ].sort((a, b) => {
+    if (a.date !== b.date) {
+      return b.date - a.date;
+    } else {
+      if (a.type === 'Failed' && b.type === 'Banned') {
+        return 1;
+      } else if (a.type === 'Banned' && b.type === 'Failed') {
+        return -1;
+      } else {
+        return 0;
+      }
+    }
+  });
+
+  console.log(formattedEvents);
 
   // height - 150 because of the pagination / 50 because of the row height
   const rowsPerPage = Math.ceil((height - 180) / 40);
