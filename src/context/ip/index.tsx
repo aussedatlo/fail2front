@@ -38,7 +38,6 @@ export const IpContextProvider: React.FC<IpContextProviderProps> = ({
 
   const initHostIp = useCallback(async () => {
     const hostIpInfos = await IpService.getIpInfos('host', false);
-    console.log('hostIpInfos', hostIpInfos);
     setIpInfos((prev) => ({ ...prev, host: hostIpInfos }));
   }, []);
 

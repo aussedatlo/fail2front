@@ -188,15 +188,7 @@ export const Fail2BanContextProvider: React.FC<
     [bans, jails, fails, globalBans, stats, healthBack, healthBan],
   );
 
-  useEffect(() => {
-    console.log('Fail2BanContextProvider state:', state);
-  }, [state]);
-
   const [debouncedState] = useDebounce<State>(state, 500);
-
-  useEffect(() => {
-    console.log('Fail2BanContextProvider debouncedState:', debouncedState);
-  }, [debouncedState]);
 
   return (
     <Fail2BanContext.Provider

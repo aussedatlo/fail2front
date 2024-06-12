@@ -65,9 +65,6 @@ export const IpView: React.FC = () => {
     return fails?.[jail]?.filter((fail) => fail.ip === ip) ?? [];
   }, [fails, jail, ip]);
 
-  console.log(fails);
-  console.log(failsFiltered);
-
   const onGoBack = () => {
     navigate(-1);
   };
