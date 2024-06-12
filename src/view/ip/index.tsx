@@ -108,7 +108,7 @@ export const IpView: React.FC = () => {
           <Tooltip title="Edit layout" arrow>
             <Button
               onClick={() => setIsEditMode(true)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
             >
               <DashboardCustomizeIcon />

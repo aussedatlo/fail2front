@@ -107,7 +107,7 @@ export const JailView: React.FC = () => {
           <Tooltip title="Edit layout" arrow>
             <Button
               onClick={() => setIsEditMode(true)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
             >
               <DashboardCustomizeIcon />
@@ -117,7 +117,7 @@ export const JailView: React.FC = () => {
           <Tooltip title="Save layout" arrow>
             <Button
               onClick={() => setIsEditMode(false)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
               color="secondary"
             >
@@ -127,7 +127,7 @@ export const JailView: React.FC = () => {
         )}
 
         <Tooltip title="Edit Jail" arrow>
-          <Button sx={{ marginRight: 1 }} variant="contained">
+          <Button sx={{ margin: 0.5 }} variant="contained">
             <EditIcon />
           </Button>
         </Tooltip>
