@@ -12,7 +12,6 @@ export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({ ip }) => {
   const { addIp } = useContext(IpContext);
 
   const onUpdateIp = async (): Promise<void> => {
-    console.log('onUpdateIp', false);
     addIp(ip, false);
   };
 
@@ -20,7 +19,6 @@ export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({ ip }) => {
     _result: void,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
-    console.log('onUpdateIpComplete');
     setLoading(false);
   };
 

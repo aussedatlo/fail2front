@@ -32,19 +32,32 @@ export const IpContextProvider: React.FC<IpContextProviderProps> = ({
     setIpInfos((prev) => ({ ...prev, [ip]: response }));
   }, []);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
+  const updateStorage = useCallback(() => {
     localStorage.setItem('ipInfos', JSON.stringify(ipInfos));
-  }, [ipInfos, isLoaded]);
+  }, [ipInfos]);
 
-  useEffect(() => {
+  const initHostIp = useCallback(async () => {
+    const hostIpInfos = await IpService.getIpInfos('host', false);
+    setIpInfos((prev) => ({ ...prev, host: hostIpInfos }));
+  }, []);
+
+  const initStorage = useCallback(() => {
     const ipInfos = localStorage.getItem('ipInfos');
     if (ipInfos) {
       setIpInfos(JSON.parse(ipInfos));
     }
-    setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    updateStorage();
+  }, [ipInfos, isLoaded, updateStorage]);
+
+  useEffect(() => {
+    initStorage();
+    initHostIp().then(() => setIsLoaded(true));
+  }, [initHostIp, initStorage]);
 
   return (
     <IpContext.Provider

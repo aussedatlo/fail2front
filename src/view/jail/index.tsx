@@ -18,6 +18,7 @@ import useResizeObserver from 'use-resize-observer';
 import { LastEventsContentTile } from '@/components/LastEventsContentTile';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
+import { JailRefresher } from '@/components/refresher/JailRefresher';
 import { StatContentTile } from '@/components/StatContentTile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { BannedIpsContentTile } from '@/view/jail/components/BannedIpsContentTile';
@@ -81,6 +82,7 @@ export const JailView: React.FC = () => {
 
   return (
     <Root ref={ref}>
+      <JailRefresher jail={jail} />
       <Box
         sx={{
           display: 'flex',
@@ -105,7 +107,7 @@ export const JailView: React.FC = () => {
           <Tooltip title="Edit layout" arrow>
             <Button
               onClick={() => setIsEditMode(true)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
             >
               <DashboardCustomizeIcon />
@@ -115,7 +117,7 @@ export const JailView: React.FC = () => {
           <Tooltip title="Save layout" arrow>
             <Button
               onClick={() => setIsEditMode(false)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
               color="secondary"
             >
@@ -125,7 +127,7 @@ export const JailView: React.FC = () => {
         )}
 
         <Tooltip title="Edit Jail" arrow>
-          <Button sx={{ marginRight: 1 }} variant="contained">
+          <Button sx={{ margin: 0.5 }} variant="contained">
             <EditIcon />
           </Button>
         </Tooltip>

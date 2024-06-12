@@ -44,7 +44,6 @@ export const LoadingButton = <T extends unknown>({
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     setLoading(true);
-    console.log(onClick);
     const result = await onClick(event);
 
     // add a delay to simulate a network request

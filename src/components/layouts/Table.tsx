@@ -57,7 +57,10 @@ export const Table = <TData extends object, TFormattedData extends object>({
               {labels.map((key, index) => (
                 <TableCell
                   key={index}
-                  sx={{ width: colsWidth?.[index] ?? 'auto' }}
+                  sx={{
+                    width: colsWidth?.[index] ?? 'auto',
+                    borderColor: 'divider',
+                  }}
                 >
                   <Typography sx={{ textTransform: 'capitalize' }}>
                     {key}
@@ -83,6 +86,7 @@ export const Table = <TData extends object, TFormattedData extends object>({
                     sx={{
                       height: 40,
                       width: colsWidth?.[index] ?? 'auto',
+                      borderColor: 'divider',
                     }}
                   >
                     {value}

@@ -20,8 +20,11 @@ import { UpdateIpButton } from '@/components/buttons/UpdateIpButton';
 import { LastEventsContentTile } from '@/components/LastEventsContentTile';
 import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
+import { JailRefresher } from '@/components/refresher/JailRefresher';
 import { StatContentTile } from '@/components/StatContentTile';
 import { Fail2BanContext } from '@/context/fail2ban';
+import { IpInfosContentTile } from '@/view/ip/components/IpInfosContentTile';
+import MapContentTile from '@/view/ip/components/MapContentTile';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
 const Root = styled(Box)`
@@ -63,15 +66,13 @@ export const IpView: React.FC = () => {
     return fails?.[jail]?.filter((fail) => fail.ip === ip) ?? [];
   }, [fails, jail, ip]);
 
-  console.log(fails);
-  console.log(failsFiltered);
-
   const onGoBack = () => {
     navigate(-1);
   };
 
   return (
     <Root ref={ref}>
+      <JailRefresher jail={jail} />
       <Box
         sx={{
           display: 'flex',
@@ -107,7 +108,7 @@ export const IpView: React.FC = () => {
           <Tooltip title="Edit layout" arrow>
             <Button
               onClick={() => setIsEditMode(true)}
-              sx={{ marginRight: 1 }}
+              sx={{ margin: 0.5 }}
               variant="contained"
             >
               <DashboardCustomizeIcon />
@@ -159,8 +160,20 @@ export const IpView: React.FC = () => {
           </Box>
 
           <Box key="last-events">
-            <Tile isEditMode={isEditMode} title="Total failed">
+            <Tile isEditMode={isEditMode} title="Last events">
               <LastEventsContentTile jail={jail} ip={ip} />
+            </Tile>
+          </Box>
+
+          <Box key="ip-infos">
+            <Tile isEditMode={isEditMode} title="Total failed">
+              <IpInfosContentTile ip={ip} />
+            </Tile>
+          </Box>
+
+          <Box key="map">
+            <Tile isEditMode={isEditMode} title="Map">
+              <MapContentTile ip={ip} />
             </Tile>
           </Box>
         </Grid>
