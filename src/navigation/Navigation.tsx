@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Box, styled } from '@mui/material';
 
-import { Sidebar } from '@/navigation/Sidebar';
+import { AppBar } from '@/components/appbar/AppBar';
+import { DesktopSideBar } from '@/components/sidebar/DesktopSideBar';
+import { MobileSideBar } from '@/components/sidebar/MobileSideBar';
 import { DashboardView } from '@/view/dashboard/Dashboard';
 import { IpView } from '@/view/ip';
 import { JailView } from '@/view/jail';
@@ -23,16 +25,22 @@ const routes: RouteType[] = [
 ];
 
 const Root = styled(Box)`
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: row;
-  flex-grow: 1;
+  background-color: ${({ theme }) => theme.palette.background.paper};
+  overflow: hidden;
 `;
 
 export const Navigation: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <BrowserRouter>
+      <AppBar onMenuOpen={() => setIsOpen(true)} />
       <Root>
-        <Sidebar />
+        <MobileSideBar isOpen={isOpen} onClose={() => setIsOpen(false)} />
+        <DesktopSideBar />
         <Routes>
           {routes.map((route) => (
             <Route
