@@ -1,6 +1,7 @@
 import React from 'react';
 import { createContext } from 'react';
 import { Box, BoxProps } from '@mui/material';
+import { useDebounce } from 'use-debounce';
 import useResizeObserver from 'use-resize-observer';
 
 type ResizeProviderProps = {
@@ -15,10 +16,14 @@ export const ResizeProviderContext = createContext<ResizeProviderProps>({
 
 export const SizeProvider: React.FC<BoxProps> = ({ children, ...props }) => {
   const { ref, width, height } = useResizeObserver();
+  const debouncedWidth = useDebounce(width, 50)[0];
+  const debouncedHeight = useDebounce(height, 50)[0];
 
   return (
     <Box ref={ref} {...props}>
-      <ResizeProviderContext.Provider value={{ width, height }}>
+      <ResizeProviderContext.Provider
+        value={{ width: debouncedWidth, height: debouncedHeight }}
+      >
         {children}
       </ResizeProviderContext.Provider>
     </Box>

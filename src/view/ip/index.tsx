@@ -23,6 +23,7 @@ import { Tile } from '@/components/layouts/Tile';
 import { StatContentTile } from '@/components/StatContentTile';
 import { Fail2BanContext } from '@/context/fail2ban';
 import { IpInfosContentTile } from '@/view/ip/components/IpInfosContentTile';
+import MapContentTile from '@/view/ip/components/MapContentTile';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
 
 const Root = styled(Box)`
@@ -168,6 +169,12 @@ export const IpView: React.FC = () => {
           <Box key="ip-infos">
             <Tile isEditMode={isEditMode} title="Total failed">
               <IpInfosContentTile ip={ip} />
+            </Tile>
+          </Box>
+
+          <Box key="map">
+            <Tile isEditMode={isEditMode} title="Map">
+              <MapContentTile ip={ip} />
             </Tile>
           </Box>
         </Grid>

@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import countries from 'i18n-iso-countries';
+import LOCALE from 'i18n-iso-countries/langs/en.json';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
 import { SnackbarProvider } from 'notistack';
@@ -15,6 +17,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 TimeAgo.addDefaultLocale(en);
+countries.registerLocale(LOCALE);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
