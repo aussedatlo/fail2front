@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
@@ -40,19 +40,9 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
   jail,
   ip,
 }) => {
-  const { refreshJail, fails, globalBans } = useContext(Fail2BanContext);
+  const { fails, globalBans } = useContext(Fail2BanContext);
   const height = useSize().height ?? 0;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      refreshJail(jail);
-    }, 10000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, [jail, refreshJail]);
 
   const formattedFails: JailEvent[] = useMemo(() => {
     return (
@@ -91,8 +81,6 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
         }
       }
     });
-
-  console.log(formattedEvents);
 
   // height - 150 because of the pagination / 50 because of the row height
   const rowsPerPage = Math.ceil((height - 180) / 40);
