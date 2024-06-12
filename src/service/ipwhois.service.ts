@@ -10,7 +10,7 @@ const getIpInfos = async (ip: string, useCache: boolean = true) => {
   }
 
   const response = await axios.request<IpInfos>({
-    url: `https://ipwho.is/` + ip,
+    url: `https://ipwho.is/${ip === 'host' ? '' : ip}`,
     method: 'GET',
   });
 
