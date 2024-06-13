@@ -80,6 +80,7 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
       data={events}
       formatter={formatter}
       onClick={(row) => navigate(`/jail/${jailName}/${row.ip}`)}
+      filterKeys={['type', 'ip', 'match']}
     />
   );
 };

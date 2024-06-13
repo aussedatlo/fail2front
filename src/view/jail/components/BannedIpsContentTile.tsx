@@ -53,6 +53,7 @@ export const BannedIpsContentTile: React.FC<BannedIpsContentTileProps> = ({
       formatter={formatter}
       data={ips}
       onClick={onClick}
+      filterKeys={['ip', 'country', 'city', 'isp']}
     />
   );
 };
