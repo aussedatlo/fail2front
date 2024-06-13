@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import LanIcon from '@mui/icons-material/Lan';
@@ -22,7 +22,9 @@ import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
 import { JailRefresher } from '@/components/refresher/JailRefresher';
 import { StatContentTile } from '@/components/StatContentTile';
-import { Fail2BanContext } from '@/context/fail2ban';
+import { useEventsByIp } from '@/hooks/useEvents';
+import { useIpInfos } from '@/hooks/useIp';
+import { useBanStatus, useJail } from '@/hooks/useJail';
 import { IpInfosContentTile } from '@/view/ip/components/IpInfosContentTile';
 import MapContentTile from '@/view/ip/components/MapContentTile';
 import { StatusContentTile } from '@/view/ip/components/StatusContentTile';
@@ -49,24 +51,23 @@ type IpParams = {
 };
 
 export const IpView: React.FC = () => {
-  const { ip, jail } = useParams<keyof IpParams>() as IpParams;
+  const { ip, jail: jailName } = useParams<keyof IpParams>() as IpParams;
   const navigate = useNavigate();
-  const { jails, globalBans, fails } = useContext(Fail2BanContext);
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const jail = useJail(jailName);
+  const isBanned = useBanStatus(jail.name, ip);
+  const events = useEventsByIp(jail.name, ip);
+  const ipInfos = useIpInfos(ip);
   const { ref, width } = useResizeObserver();
 
-  const jailData = jails?.find((j) => j.name === jail);
-  const isBanned =
-    jailData?.stats.ip_list.findIndex((jailIp) => jailIp.ip === ip) !== -1;
-
-  const globalBansFiltered = useMemo(() => {
-    return globalBans?.[jail]?.filter((ban) => ban.ip === ip) ?? [];
-  }, [globalBans, jail, ip]);
-
-  const failsFiltered = useMemo(() => {
-    return fails?.[jail]?.filter((fail) => fail.ip === ip) ?? [];
-  }, [fails, jail, ip]);
+  const numberOfBans = useMemo(
+    () => events.filter((event) => event.type === 'Banned').length,
+    [events],
+  );
+  const numberOfFails = useMemo(
+    () => events.filter((event) => event.type === 'Failed').length,
+    [events],
+  );
 
   const onGoBack = () => {
     navigate(-1);
@@ -74,7 +75,7 @@ export const IpView: React.FC = () => {
 
   return (
     <Root ref={ref}>
-      <JailRefresher jail={jail} />
+      <JailRefresher jail={jail.name} />
       <Box
         sx={{
           display: 'flex',
@@ -91,7 +92,7 @@ export const IpView: React.FC = () => {
           >
             <ShieldIcon sx={{ marginRight: 1 }} />
             <StyledTypography variant="h5" color="text.primary">
-              {jail}
+              {jail.name}
             </StyledTypography>
           </Box>
           <Box
@@ -130,9 +131,9 @@ export const IpView: React.FC = () => {
         )}
 
         {isBanned ? (
-          <UnbanButton ip={ip} jail={jail} />
+          <UnbanButton ip={ip} jailName={jail.name} />
         ) : (
-          <BanButton ip={ip} jail={jail} />
+          <BanButton ip={ip} jailName={jail.name} />
         )}
 
         <UpdateIpButton ip={ip} />
@@ -148,28 +149,25 @@ export const IpView: React.FC = () => {
 
           <Box key="banned-total">
             <Tile isEditMode={isEditMode} title="Total banned">
-              <StatContentTile
-                value={globalBansFiltered.length}
-                color="secondary"
-              />
+              <StatContentTile value={numberOfBans} color="secondary" />
             </Tile>
           </Box>
 
           <Box key="failed-total">
             <Tile isEditMode={isEditMode} title="Total failed">
-              <StatContentTile value={failsFiltered.length} color="primary" />
+              <StatContentTile value={numberOfFails} color="primary" />
             </Tile>
           </Box>
 
           <Box key="last-events">
             <Tile isEditMode={isEditMode} title="Last events">
-              <LastEventsContentTile jail={jail} ip={ip} />
+              <LastEventsContentTile jailName={jail.name} events={events} />
             </Tile>
           </Box>
 
           <Box key="ip-infos">
-            <Tile isEditMode={isEditMode} title="Total failed">
-              <IpInfosContentTile ip={ip} />
+            <Tile isEditMode={isEditMode} title="IP infos">
+              <IpInfosContentTile ipInfos={ipInfos} />
             </Tile>
           </Box>
 

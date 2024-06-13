@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import {
   ComposableMap,
   Geographies,
@@ -10,27 +9,9 @@ import { Box, useTheme } from '@mui/material';
 import countries from 'i18n-iso-countries';
 
 import MAP from '@/assets/map.json';
-import { IpContext } from '@/context/ip';
+import { useGeoMetrics } from '@/hooks/useGeoMetrics';
+import { useIpInfos } from '@/hooks/useIp';
 import { useSize } from '@/provider/SizeProvider';
-
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number,
-) => {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in kilometers
-};
 
 function linearInterpolation(
   x: number,
@@ -71,36 +52,20 @@ type MapContentTileProps = {
 };
 
 export default function MapContentTile({ ip }: MapContentTileProps) {
-  const { ipInfos } = useContext(IpContext);
   const theme = useTheme();
   const { width = 0, height = 0 } = useSize();
-
-  const fromCoords: [number, number] = [
-    ipInfos[ip]?.longitude ?? 2.3522,
-    ipInfos[ip]?.latitude ?? 48.8566,
-  ];
-  const toCoords: [number, number] = [2.3522, 48.8566];
-
-  // Calculate the midpoint
-  const midpoint: [number, number] = [
-    (fromCoords[0] + toCoords[0]) / 2,
-    (fromCoords[1] + toCoords[1]) / 2,
-  ];
-
-  // Calculate the distance
-  const distance =
-    calculateDistance(fromCoords[1], fromCoords[0], toCoords[1], toCoords[0]) ??
-    0;
+  const { distance, midpoint, fromCoords, toCoords } = useGeoMetrics(ip);
+  const ipInfos = useIpInfos(ip);
+  const hostInfos = useIpInfos('host');
 
   // Determine the scale based on the distance
   const scale = linearInterpolation(distance, [
     { x: 0, y: 5000 },
-    { x: 6000, y: 400 },
-    { x: 10000, y: 300 },
-    { x: 30000, y: 200 },
+    { x: 1000, y: 1000 },
+    { x: 6000, y: 200 },
+    { x: 10000, y: 150 },
+    { x: 30000, y: 150 },
   ]);
-
-  if (!ipInfos[ip] || !ipInfos?.host) return null;
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
@@ -121,10 +86,8 @@ export default function MapContentTile({ ip }: MapContentTileProps) {
                   key={geo.rsmKey}
                   geography={geo}
                   fill={
-                    geo.id ===
-                      countries.alpha2ToAlpha3(ipInfos[ip].country_code) ||
-                    geo.id ===
-                      countries.alpha2ToAlpha3(ipInfos.host.country_code)
+                    geo.id === countries.alpha2ToAlpha3(ipInfos.country_code) ||
+                    geo.id === countries.alpha2ToAlpha3(hostInfos.country_code)
                       ? theme.palette.primary.dark
                       : theme.palette.action.disabledBackground
                   }

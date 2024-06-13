@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
+  Input,
+  InputAdornment,
   Table as MuiTable,
   TableBody,
   TableCell,
@@ -11,11 +14,14 @@ import {
   Typography,
 } from '@mui/material';
 
+import { getValuesFromComplexObject } from '@/utils/object';
+
 type TableProps<TData, TFormattedData> = {
   labels: string[];
   data: TData[];
-  colsWidth?: string[];
   rowsPerPage: number;
+  colsWidth?: string[];
+  filterKeys?: string[];
   onClick?: (item: TData) => void;
   formatter?: (item: TData) => TFormattedData;
 };
@@ -25,14 +31,27 @@ export const Table = <TData extends object, TFormattedData extends object>({
   data,
   colsWidth,
   rowsPerPage,
+  filterKeys,
   onClick,
   formatter,
 }: TableProps<TData, TFormattedData>) => {
   const [page, setPage] = useState(0);
+  const [search, setSearch] = useState('');
+
+  const dataFiltered = useMemo(
+    () =>
+      data.filter((item) => {
+        const values = getValuesFromComplexObject(item, filterKeys);
+        return values.some((value) =>
+          value.toString().toLowerCase().includes(search.toLowerCase()),
+        );
+      }),
+    [data, filterKeys, search],
+  );
 
   const dataForPage = useMemo(
-    () => data.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
-    [data, page, rowsPerPage],
+    () => dataFiltered.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
+    [dataFiltered, page, rowsPerPage],
   );
 
   const formattedDataForPage = useMemo(
@@ -48,8 +67,32 @@ export const Table = <TData extends object, TFormattedData extends object>({
     setPage(newPage);
   };
 
+  const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          // FIXME: not the best css here
+          marginTop: '-25px',
+          marginBottom: '-10px',
+        }}
+      >
+        <Box flex={1} />
+        <Input
+          placeholder="Search"
+          onChange={onSearchChange}
+          startAdornment={
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          }
+        />
+      </Box>
       <TableContainer component={Box} sx={{ marginTop: 2, overflow: 'hidden' }}>
         <MuiTable size="small" sx={{ tableLayout: 'fixed' }}>
           <TableHead>
@@ -107,7 +150,7 @@ export const Table = <TData extends object, TFormattedData extends object>({
       <TablePagination
         rowsPerPageOptions={[]}
         component={Box}
-        count={data.length}
+        count={dataFiltered.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={onPageChange}

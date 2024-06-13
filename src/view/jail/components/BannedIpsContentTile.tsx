@@ -1,74 +1,48 @@
-import { useContext, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Table } from '@/components/layouts/Table';
-import { IpContext } from '@/context/ip';
 import { useSize } from '@/provider/SizeProvider';
-import { Jail } from '@/types/Jail';
+import { IpInfos } from '@/types/IpInfos';
 
-type BannedIpsContentTileProps = {
-  jail: Jail;
-};
-
-type IpData = {
+type IpInfosFormatted = {
   ip: string;
-  country: string;
+  country: JSX.Element;
   city: string;
   provider: string;
-  flag: string;
+};
+
+type BannedIpsContentTileProps = {
+  jailName: string;
+  ips: IpInfos[];
 };
 
 export const BannedIpsContentTile: React.FC<BannedIpsContentTileProps> = ({
-  jail,
+  jailName,
+  ips,
 }) => {
-  const { ipInfos, addIp, isLoaded } = useContext(IpContext);
   const height = useSize().height ?? 0;
   const navigate = useNavigate();
 
   // height - 180 because of the pagination / 40 because of the row height
   const rowsPerPage = Math.ceil((height - 180) / 40);
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    jail.stats.ip_list.forEach(({ ip }) => {
-      if (!ipInfos[ip]) {
-        addIp(ip);
-      }
-    });
-  }, [addIp, ipInfos, isLoaded, jail]);
-
-  const data: IpData[] = useMemo(() => {
-    return jail.stats.ip_list.map(({ ip }) => {
-      const ipInfo = ipInfos[ip];
-
-      return {
-        ip,
-        country: ipInfo?.country ?? 'Unknown',
-        flag: ipInfo?.flag?.emoji ?? '',
-        city: ipInfo?.city ?? 'Unknown',
-        provider: ipInfo?.connection?.isp ?? 'Unknown',
-      };
-    });
-  }, [ipInfos, jail]);
-
-  const formatter = (item: IpData) => {
-    const { ip, country, city, provider, flag } = item;
+  const formatter = (item: IpInfos): IpInfosFormatted => {
+    const { ip, country, city, flag, connection } = item;
     return {
       ip,
       city,
       country: (
         <>
-          <span style={{ marginRight: 8 }}>{flag}</span>
+          <span style={{ marginRight: 8 }}>{flag.emoji}</span>
           {country}
         </>
       ),
-      provider,
+      provider: connection.isp,
     };
   };
 
-  const onClick = (item: IpData) => {
-    navigate(`/jail/${jail.name}/${item.ip}`);
+  const onClick = (item: IpInfos) => {
+    navigate(`/jail/${jailName}/${item.ip}`);
   };
 
   return (
@@ -77,8 +51,9 @@ export const BannedIpsContentTile: React.FC<BannedIpsContentTileProps> = ({
       rowsPerPage={rowsPerPage}
       colsWidth={['20%', '20%', '20%', '40%']}
       formatter={formatter}
-      data={data}
+      data={ips}
       onClick={onClick}
+      filterKeys={['ip', 'country', 'city', 'isp']}
     />
   );
 };

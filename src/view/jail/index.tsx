@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,7 +20,9 @@ import { Grid } from '@/components/layouts/Grid';
 import { Tile } from '@/components/layouts/Tile';
 import { JailRefresher } from '@/components/refresher/JailRefresher';
 import { StatContentTile } from '@/components/StatContentTile';
-import { Fail2BanContext } from '@/context/fail2ban';
+import { useEvents } from '@/hooks/useEvents';
+import { useMultipleIpsInfos } from '@/hooks/useIp';
+import { useJail, useJailStats } from '@/hooks/useJail';
 import { BannedIpsContentTile } from '@/view/jail/components/BannedIpsContentTile';
 import { BanNowContentTile } from '@/view/jail/components/BanNowContentTile';
 import { ConfigContentTile } from '@/view/jail/components/ConfigContentTile';
@@ -48,25 +50,24 @@ type JailParams = {
 
 export const JailView: React.FC = () => {
   const theme = useTheme();
-  const { jail } = useParams<keyof JailParams>() as JailParams;
-  const { jails, stats } = useContext(Fail2BanContext);
+  const { jail: jailName } = useParams<keyof JailParams>() as JailParams;
   const [isEditMode, setIsEditMode] = useState(false);
-
   const { ref, width } = useResizeObserver();
+  const jail = useJail(jailName);
+  const stats = useJailStats(jailName);
+  const ips = useMultipleIpsInfos(jail.stats.ip_list.map(({ ip }) => ip));
+  const events = useEvents(jail.name);
 
-  const jailData = jails?.find((j) => j.name === jail);
-  const jailStat = useMemo(() => stats?.[jail] ?? {}, [stats, jail]);
-
-  const labels = Object.keys(jailStat);
+  const labels = Object.keys(stats);
 
   const generateData = useCallback(
     (key: 'currently_banned' | 'currently_failed') => {
       return labels.reduce((acc: number[], value: string) => {
-        acc.push(jailStat[value][key]);
+        acc.push(stats[value][key]);
         return acc;
       }, []);
     },
-    [jailStat, labels],
+    [stats, labels],
   );
 
   const dataCurrentlyBanned = useMemo(
@@ -78,13 +79,9 @@ export const JailView: React.FC = () => {
     [generateData],
   );
 
-  if (!jailData || !stats) {
-    return null;
-  }
-
   return (
     <Root ref={ref}>
-      <JailRefresher jail={jail} />
+      <JailRefresher jail={jail.name} />
       <Box
         sx={{
           display: 'flex',
@@ -98,7 +95,7 @@ export const JailView: React.FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <ShieldIcon sx={{ marginRight: 1 }} />
             <StyledTypography variant="h5" color="text.primary">
-              {jail}
+              {jail.name}
             </StyledTypography>
           </Box>
         </Breadcrumbs>
@@ -140,7 +137,7 @@ export const JailView: React.FC = () => {
           <Box key="failed-total">
             <Tile isEditMode={isEditMode} title="Total failed">
               <StatContentTile
-                value={jailData.filter.failed}
+                value={jail.filter.failed}
                 color={theme.palette.primary.main}
               />
             </Tile>
@@ -149,7 +146,7 @@ export const JailView: React.FC = () => {
           <Box key="failed-current">
             <Tile isEditMode={isEditMode} title="Current failed">
               <StatContentTile
-                value={jailData.filter.currently_failed}
+                value={jail.filter.currently_failed}
                 color={theme.palette.primary.main}
               />
             </Tile>
@@ -168,7 +165,7 @@ export const JailView: React.FC = () => {
           <Box key="banned-total">
             <Tile isEditMode={isEditMode} title="Total banned">
               <StatContentTile
-                value={jailData.stats.banned}
+                value={jail.stats.banned}
                 color={theme.palette.secondary.main}
               />
             </Tile>
@@ -177,7 +174,7 @@ export const JailView: React.FC = () => {
           <Box key="banned-current">
             <Tile isEditMode={isEditMode} title="Current banned">
               <StatContentTile
-                value={jailData.stats.currently_banned}
+                value={jail.stats.currently_banned}
                 color={theme.palette.secondary.main}
               />
             </Tile>
@@ -195,25 +192,25 @@ export const JailView: React.FC = () => {
 
           <Box key="ip-banned">
             <Tile isEditMode={isEditMode} title="Banned Ips">
-              <BannedIpsContentTile jail={jailData} />
+              <BannedIpsContentTile jailName={jail.name} ips={ips} />
             </Tile>
           </Box>
 
           <Box key="last-events">
             <Tile isEditMode={isEditMode} title="Last events">
-              <LastEventsContentTile jail={jailData.name} />
+              <LastEventsContentTile jailName={jail.name} events={events} />
             </Tile>
           </Box>
 
           <Box key="ban-now">
             <Tile isEditMode={isEditMode} title="Ban Ip">
-              <BanNowContentTile jail={jailData} />
+              <BanNowContentTile jailName={jail.name} />
             </Tile>
           </Box>
 
           <Box key="config">
             <Tile isEditMode={isEditMode} title="Config file list">
-              <ConfigContentTile jail={jailData} />
+              <ConfigContentTile jail={jail} />
             </Tile>
           </Box>
         </Grid>

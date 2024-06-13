@@ -1,4 +1,3 @@
-import { useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactTimeAgo from 'react-time-ago';
 import BlockIcon from '@mui/icons-material/Block';
@@ -13,8 +12,8 @@ import {
 } from '@mui/material';
 
 import { Table } from '@/components/layouts/Table';
-import { Fail2BanContext } from '@/context/fail2ban';
 import { useSize } from '@/provider/SizeProvider';
+import { Event } from '@/types/Event';
 
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
@@ -24,68 +23,22 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-type JailEvent = {
-  date: number;
-  type: 'Banned' | 'Failed';
-  ip: string;
-  match: string;
-};
-
 type LastEventsContentTileProps = {
-  jail: string;
-  ip?: string;
+  jailName: string;
+  events: Event[];
 };
 
 export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
-  jail,
-  ip,
+  jailName,
+  events,
 }) => {
-  const { fails, globalBans } = useContext(Fail2BanContext);
   const height = useSize().height ?? 0;
   const navigate = useNavigate();
-
-  const formattedFails: JailEvent[] = useMemo(() => {
-    return (
-      fails?.[jail]?.map((fail) => ({
-        date: fail.timeoffail * 1000,
-        type: 'Failed',
-        ip: fail.ip,
-        match: fail.match,
-      })) ?? []
-    );
-  }, [fails, jail]);
-
-  const formattedBans: JailEvent[] = useMemo(() => {
-    return (
-      globalBans?.[jail]?.map((ban) => ({
-        date: ban.timeofban * 1000,
-        type: 'Banned',
-        ip: ban.ip,
-        match: ban.data.matches.at(-1) ?? 'Manual ban',
-      })) ?? []
-    );
-  }, [globalBans, jail]);
-
-  const formattedEvents: JailEvent[] = [...formattedFails, ...formattedBans]
-    .filter((event) => (ip ? event.ip === ip : true))
-    .sort((a, b) => {
-      if (a.date !== b.date) {
-        return b.date - a.date;
-      } else {
-        if (a.type === 'Failed' && b.type === 'Banned') {
-          return 1;
-        } else if (a.type === 'Banned' && b.type === 'Failed') {
-          return -1;
-        } else {
-          return 0;
-        }
-      }
-    });
 
   // height - 150 because of the pagination / 50 because of the row height
   const rowsPerPage = Math.ceil((height - 180) / 40);
 
-  const formatter = (row: JailEvent) => {
+  const formatter = (row: Event) => {
     const { date, type, ip, match } = row;
 
     return {
@@ -124,9 +77,10 @@ export const LastEventsContentTile: React.FC<LastEventsContentTileProps> = ({
       labels={['Date', 'Type', 'IP', 'Match']}
       rowsPerPage={rowsPerPage}
       colsWidth={['155px', '130px', '165px']}
-      data={formattedEvents}
+      data={events}
       formatter={formatter}
-      onClick={(row) => navigate(`/jail/${jail}/${row.ip}`)}
+      onClick={(row) => navigate(`/jail/${jailName}/${row.ip}`)}
+      filterKeys={['type', 'ip', 'match']}
     />
   );
 };
