@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { Box, TextField } from '@mui/material';
 
 import { BanButton } from '@/components/buttons/BanButton';
-import { Jail } from '@/types/Jail';
 
 type BanNowContentTileProps = {
-  jail: Jail;
+  jailName: string;
 };
 
 export const BanNowContentTile: React.FC<BanNowContentTileProps> = ({
-  jail,
+  jailName,
 }) => {
   const [value, setValue] = useState<string>('');
 
@@ -38,7 +37,7 @@ export const BanNowContentTile: React.FC<BanNowContentTileProps> = ({
       />
 
       <BanButton
-        jail={jail.name}
+        jailName={jailName}
         ip={value}
         onComplete={(_arg, setLoading) => {
           setLoading(false);

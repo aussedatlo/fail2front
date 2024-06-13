@@ -9,10 +9,10 @@ type UpdateIpButtonProps = {
 };
 
 export const UpdateIpButton: React.FC<UpdateIpButtonProps> = ({ ip }) => {
-  const { addIp } = useContext(IpContext);
+  const { registerIp } = useContext(IpContext);
 
   const onUpdateIp = async (): Promise<void> => {
-    addIp(ip, false);
+    registerIp(ip, false);
   };
 
   const onUpdateIpComplete = (

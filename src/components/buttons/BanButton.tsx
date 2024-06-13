@@ -10,12 +10,12 @@ import { Fail2BanContext } from '@/context/fail2ban';
 import Fail2BackService from '@/service/fail2back.service';
 
 type BanButtonProps = {
-  jail: string;
+  jailName: string;
   ip: string;
 } & Omit<LoadingButtonProps<boolean>, 'onClick'>;
 
 export const BanButton: React.FC<BanButtonProps> = ({
-  jail,
+  jailName,
   ip,
   onComplete,
 }) => {
@@ -23,7 +23,7 @@ export const BanButton: React.FC<BanButtonProps> = ({
   const { enqueueSnackbar } = useSnackbar();
 
   const onBan = async (): Promise<boolean> => {
-    const result = await Fail2BackService.postJailsBan(jail, ip);
+    const result = await Fail2BackService.postJailsBan(jailName, ip);
     return result;
   };
 
@@ -31,7 +31,7 @@ export const BanButton: React.FC<BanButtonProps> = ({
     result: boolean,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   ) => {
-    refreshJail(jail);
+    refreshJail(jailName);
     if (result) enqueueSnackbar('IP banned', { variant: 'success' });
     else enqueueSnackbar('Failed to ban IP', { variant: 'error' });
     onComplete && onComplete(result, setLoading);
