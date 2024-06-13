@@ -95,12 +95,11 @@ export default function MapContentTile({ ip }: MapContentTileProps) {
   // Determine the scale based on the distance
   const scale = linearInterpolation(distance, [
     { x: 0, y: 5000 },
-    { x: 6000, y: 400 },
-    { x: 10000, y: 300 },
-    { x: 30000, y: 200 },
+    { x: 1000, y: 1000 },
+    { x: 6000, y: 200 },
+    { x: 10000, y: 150 },
+    { x: 30000, y: 150 },
   ]);
-
-  if (!ipInfos[ip] || !ipInfos?.host) return null;
 
   return (
     <Box sx={{ width: '100%', height: '100%' }}>
