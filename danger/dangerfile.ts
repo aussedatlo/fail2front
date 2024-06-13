@@ -39,6 +39,7 @@ const getDirectories = async (source: string) => {
 
   const scopeRegex = completeScope.join('|');
   const gitmojiCommitRegex = new RegExp(`^.+ \\((${scopeRegex})\\): [a-z ]+`);
+  const gitmojiCommitWithoutScopeRegex = new RegExp(`^.+: [a-z ]+`);
 
   /**
    * Errors
@@ -54,7 +55,10 @@ const getDirectories = async (source: string) => {
 
   const commitsInError: GitCommit[] = [];
   for (const { commit } of danger.github.commits) {
-    if (!gitmojiCommitRegex.test(commit.message)) {
+    if (
+      !gitmojiCommitRegex.test(commit.message) ||
+      !gitmojiCommitWithoutScopeRegex.test(commit.message)
+    ) {
       commitsInError.push(commit);
       console.log('Commit message:');
       console.log(commit);
