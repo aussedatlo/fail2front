@@ -4,24 +4,27 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ShieldIcon from '@mui/icons-material/Shield';
 import { Box, styled, Tab, Tabs } from '@mui/material';
 
+import { HealthCheck } from '@/components/sidebar/HealthCheck';
 import { Fail2BanContext } from '@/context/fail2ban';
-import { HealthCheck } from '@/navigation/HealthCheck';
 import { RoutePaths } from '@/navigation/Navigation';
 
-const StyledTabs = styled(Tabs)`
-  border-color: divider;
-  border-right: 1px;
-  width: 200px;
-`;
+const StyledTabs = styled(Tabs)``;
 
 const StyledTab = styled(Tab)`
   text-transform: none;
   align-items: center;
   justify-content: start;
   min-height: 50px;
+  font-size: 1.2em;
 `;
 
-export const Sidebar: React.FC = () => {
+type SideBarContentProps = {
+  isMobile?: boolean;
+};
+
+export const SideBarContent: React.FC<SideBarContentProps> = ({
+  isMobile = false,
+}) => {
   const [value, setValue] = useState<string>('dashboard');
   const { jails, healthBack, healthBan } = useContext(Fail2BanContext);
   const navigate = useNavigate();
@@ -39,7 +42,15 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        flexDirection: 'column',
+        backgroundColor: isMobile ? 'background.paper' : 'background.default',
+      }}
+    >
       <StyledTabs
         orientation="vertical"
         variant="scrollable"

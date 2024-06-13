@@ -11,7 +11,6 @@ import { Fail2BanContextProvider } from '@/context/fail2ban';
 import { IpContextProvider } from '@/context/ip';
 import { Navigation } from '@/navigation/Navigation';
 import CustomThemeProvider from '@/provider/ThemeProvider';
-import { AppBar } from '@/view/appBar/AppBar';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -26,10 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <IpContextProvider>
           <CustomThemeProvider>
             <Fail2BanContextProvider>
-              <>
-                <AppBar />
-                <Navigation />
-              </>
+              <Navigation />
             </Fail2BanContextProvider>
           </CustomThemeProvider>
         </IpContextProvider>
