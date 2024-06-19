@@ -41,9 +41,8 @@ function linearInterpolation(
   ) {
     return y0 + ((x - x0) * (y1 - y0)) / (x1 - x0);
   } else {
-    throw new Error(
-      `Cannot interpolate. Invalid points provided: ${x} ${JSON.stringify(points)}`,
-    );
+    console.log("Couldn't find interpolation points");
+    return 5000;
   }
 }
 

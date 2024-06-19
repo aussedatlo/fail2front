@@ -50,12 +50,12 @@ export const IpInfosContentTile: React.FC<IpInfosContentTileProps> = ({
         label="Country"
         value={
           <>
-            <span style={{ marginRight: 8 }}>{ipInfos.flag.emoji}</span>
+            <span style={{ marginRight: 8 }}>{ipInfos.flag?.emoji}</span>
             {ipInfos.country}
           </>
         }
       />
-      <Line label="ISP" value={ipInfos.connection.isp} />
+      <Line label="ISP" value={ipInfos.connection?.isp} />
       <Line label="Type" value={ipInfos.type} />
       <Line label="Latitude" value={ipInfos.latitude} />
       <Line label="Longitude" value={ipInfos.longitude} />

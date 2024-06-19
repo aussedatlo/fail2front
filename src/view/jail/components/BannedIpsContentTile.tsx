@@ -33,11 +33,11 @@ export const BannedIpsContentTile: React.FC<BannedIpsContentTileProps> = ({
       city,
       country: (
         <>
-          <span style={{ marginRight: 8 }}>{flag.emoji}</span>
+          <span style={{ marginRight: 8 }}>{flag?.emoji}</span>
           {country}
         </>
       ),
-      provider: connection.isp,
+      provider: connection?.isp,
     };
   };
 
