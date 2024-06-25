@@ -4,6 +4,7 @@ import { Ban } from '@/types/Ban';
 import { Fail, FailsRecord } from '@/types/Fail';
 import { GlobalBan, GlobalBansRecord } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
+import {KPIStatsFormatted} from "@/types/KPIStatsFormatted.ts";
 import {
   StatsHistory,
   StatsHistoryFormatted,
@@ -104,6 +105,16 @@ const getGlobalBans = async (): Promise<GlobalBansRecord> => {
   return response.data;
 };
 
+const getGlobalStats = async (): Promise<KPIStatsFormatted> => {
+  const response = await axios.request<KPIStatsFormatted>({
+    url: `/api/globalstats`,
+    method: 'GET',
+  });
+
+  return response.data;
+};
+
+
 const getGlobalBansByJail = async (jail: string): Promise<GlobalBan[]> => {
   const response = await axios.request<GlobalBan[]>({
     url: `/api/globalbans/${jail}`,
@@ -149,4 +160,5 @@ export default {
   getGlobalBansByJail,
   getStatHistoryFormatted,
   getStatHistoryFormattedByJail,
+  getGlobalStats
 };

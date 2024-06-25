@@ -31,7 +31,7 @@ import { LineChartContentTile } from '@/view/jail/components/LineChartContentTil
 const Root = styled(Box)`
   background-color: ${({ theme }) => theme.palette.background.paper};
   padding: ${({ theme }) => theme.spacing(3)};
-  flex: 1;
+  flex: 1;  
   overflow-y: auto;
   padding-bottom: 1rem;
 `;

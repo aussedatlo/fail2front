@@ -12,7 +12,9 @@
     "lint:prettier:fix": "prettier . --write",
     "preview": "vite preview",
     "commit": "gitmoji -c",
-    "test": "jest"
+    "test": "jest",
+    "start": "vite --port 8080 --host"
+
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

@@ -12,6 +12,7 @@ import { Ban } from '@/types/Ban';
 import { FailsRecord } from '@/types/Fail';
 import { GlobalBansRecord } from '@/types/GlobalBan';
 import { Jail } from '@/types/Jail';
+import {KPIStatsFormatted} from "@/types/KPIStatsFormatted.ts";
 import { StatsHistoryFormatted as StatsHistoryFormattedRecord } from '@/types/StatHistoryFormatted';
 
 type State = {
@@ -19,6 +20,7 @@ type State = {
   jails: Jail[];
   fails: FailsRecord;
   globalBans: GlobalBansRecord;
+  globalStats: KPIStatsFormatted;
   stats: StatsHistoryFormattedRecord;
   healthBack: boolean;
   healthBan: boolean;
@@ -35,6 +37,7 @@ const initialFail2BanContext: Fail2BanContextProps = {
   jails: [],
   fails: {},
   globalBans: {},
+  globalStats: {},
   stats: {},
   healthBack: false,
   healthBan: false,
@@ -58,6 +61,7 @@ export const Fail2BanContextProvider: React.FC<
   const [jails, setJails] = useState<Jail[]>([]);
   const [fails, setFails] = useState<FailsRecord>({});
   const [globalBans, setGlobalBans] = useState<GlobalBansRecord>({});
+  const [globalStats, setGlobalStats] = useState<KPIStatsFormatted>({});
   const [stats, setStats] = useState<StatsHistoryFormattedRecord>({});
   const [healthBack, setHealthBack] = useState<boolean>(false);
   const [healthBan, setHealthBan] = useState<boolean>(false);
@@ -108,6 +112,16 @@ export const Fail2BanContextProvider: React.FC<
       refreshGlobalBans();
       refreshStats();
     });
+  }, [refreshFails, refreshGlobalBans, refreshStats]);
+
+  /**
+   * Refreshes all the jails
+   */
+  const refreshGlobalStats = useCallback(async () => {
+    console.log('refreshGlobalStats');
+
+    const result = await Fail2BackService.getGlobalStats();
+    setGlobalStats(result);
   }, [refreshFails, refreshGlobalBans, refreshStats]);
 
   /**
@@ -166,7 +180,7 @@ export const Fail2BanContextProvider: React.FC<
    * Refreshes the health status of the back and ban service in background
    */
   useEffect(() => {
-    Promise.all([refreshHealth(), refreshBans(), refreshJails()]);
+    Promise.all([refreshHealth(), refreshBans(), refreshJails(), refreshGlobalStats()]);
 
     const timer = setInterval(() => {
       refreshHealth();
@@ -181,6 +195,7 @@ export const Fail2BanContextProvider: React.FC<
       jails,
       fails,
       globalBans,
+      globalStats,
       stats,
       healthBack,
       healthBan,
@@ -197,6 +212,7 @@ export const Fail2BanContextProvider: React.FC<
         bans: debouncedState.bans,
         fails: debouncedState.fails,
         globalBans: debouncedState.globalBans,
+        globalStats: debouncedState.globalStats,
         stats: debouncedState.stats,
         healthBack: debouncedState.healthBack,
         healthBan: debouncedState.healthBan,
